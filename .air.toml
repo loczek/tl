@@ -1,0 +1,15 @@
+root = "."
+testdata_dir = "testdata"
+tmp_dir = "tmp"
+
+[build]
+bin = "tmp/main.exe"
+cmd = "go build -o ./tmp/main.exe ./cmd/api/main.go"
+delay = 1000
+exclude_dir = ["assets", "tmp", "vendor", "testdata", "website"]
+exclude_regex = ["_test.go"]
+include_ext = ["go", "tpl", "tmpl", "html",]
+poll = true
+
+[misc]
+clean_on_exit = true

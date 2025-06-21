@@ -1,0 +1,78 @@
+services:
+  website:
+    build:
+      context: website
+    ports:
+      - 5173:5173
+    develop:
+      watch:
+        - path: ./website
+          action: sync
+          target: /app
+          ignore:
+            - node_modules
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile.multistage
+      target: final
+    expose:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=postgres://postgres:example@db:5432/postgres
+      - REDIS_URL=redis://rdb:6379/0
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://prometheus:9090/api/v1/otlp/v1/metrics
+    depends_on:
+      db:
+        condition: service_started
+      rdb:
+        condition: service_started
+    links:
+      - db
+      - rdb
+    volumes:
+      - ./:/app
+  db:
+    image: postgres
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=example
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  rdb:
+    image: redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379:6379
+  prometheus:
+    image: prom/prometheus
+    command:
+      - "--web.enable-otlp-receiver"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus:/etc/prometheus/
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 9000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/datasources/
+
+volumes:
+  db-data:
+  redis-data:
+  prometheus-data:
+  grafana-data:
