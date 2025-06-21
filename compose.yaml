@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: dockerfile.multistage
       target: final
-    expose:
+    ports:
       - 3000:3000
     environment:
       - DATABASE_URL=postgres://postgres:example@db:5432/postgres
