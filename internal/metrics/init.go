@@ -59,7 +59,7 @@ func NewMeterProviderHttp(res *resource.Resource) (*sdkmetric.MeterProvider, err
 	meterProvider := sdkmetric.NewMeterProvider(
 		sdkmetric.WithResource(res),
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exp,
-			sdkmetric.WithInterval(time.Second*5))),
+			sdkmetric.WithInterval(time.Second*15))),
 	)
 
 	return meterProvider, nil
