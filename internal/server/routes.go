@@ -31,7 +31,7 @@ func (s *Server) RegisterRoutes() {
 	s.Static("/", "./website/dist")
 	s.Post("/api/add", middleware.MetricsByPath("/api/add"), s.AddShortenedLink)
 	s.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler()))
-	s.Get("/temp", s.Temp)
+	s.Get("/temp", middleware.MetricsByPath("/temp"), s.Temp)
 	s.Get("/health", middleware.MetricsByPath("/health"), s.Health)
 	s.Get("/:hash", middleware.MetricsByPath("/hash"), s.GetUnshortenedLink)
 }
