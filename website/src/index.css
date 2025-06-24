@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+    --color-dark-600: #323232;
+    --color-dark-700: #222222;
+    --color-dark-800: #1c1c1c;
+    --color-dark-900: #141414;
+    --color-dark-950: #0c0c0c;
+}
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    /* line-height: 1.5;
+    font-weight: 400; */
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #0c0c0c;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+}
+
+html,
+body,
+#root,
+.App {
+    height: 100%;
+}
+
+.container {
+    width: 100%;
+    @media (width >= 40rem /* 640px */) {
+        max-width: 40rem /* 640px */;
+    }
+    @media (width >= 48rem /* 768px */) {
+        max-width: 48rem /* 768px */;
+    }
+    @media (width >= 64rem /* 1024px */) {
+        max-width: 64rem /* 1024px */;
+    }
+}
+
+/* body {
+    display: flex;
+    place-items: center;
+    justify-content: center;
+    min-height: 100vh;
+} */
+
+/* button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+} */
+
+.temp {
+    border-radius: 16px;
+    box-shadow: inset 0px 0px 32px 10px rgba(210, 210, 210, 1);
+    /* filter: blur(8px); */
+    /* overflow: hidden; */
+}
+
+.outer {
+    /* filter: blur(32px); */
+    /* border-image: linear-gradient(#20001f, #351900) 10 / 64px; */
+    background: linear-gradient(to left, #20001f 0%, #351900 100%);
+}
+
+.glow-ring {
+    border: 8px solid #cc00c4;
+    filter: blur(2px);
+}
+
+.border-ring {
+    border-image: url("/bglow.png") 128 / 128px;
+    mix-blend-mode: screen;
+}
+
+.border-ring-glow {
+    border-image: url("/bglow.png") 128 / 128px;
+    mix-blend-mode: plus-lighter;
+}
