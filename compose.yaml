@@ -14,8 +14,8 @@ services:
   server:
     build:
       context: .
-      dockerfile: dockerfile.multistage
-      target: final
+      dockerfile: dockerfile
+      # target: final
     ports:
       - 3000:3000
     environment:
@@ -52,6 +52,13 @@ services:
       - redis-data:/data
     ports:
       - 6379:6379
+  loki:
+    image: grafana/loki
+    ports:
+      - 3100:3100
+    volumes:
+      - loki-data:/loki
+      - ./loki/loki.yaml:/etc/loki/loki.yaml
   prometheus:
     image: prom/prometheus
     command:
@@ -76,3 +83,4 @@ volumes:
   redis-data:
   prometheus-data:
   grafana-data:
+  loki-data:
