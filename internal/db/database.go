@@ -7,6 +7,7 @@ import (
 	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/loczek/go-link-shortener/internal/config"
 )
 
 type Store struct {
@@ -14,7 +15,7 @@ type Store struct {
 }
 
 func New(ctx context.Context) *Store {
-	db, err := sql.Open("pgx", os.Getenv("DATABASE_URL"))
+	db, err := sql.Open("pgx", config.Env.DATABASE_URL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

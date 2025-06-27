@@ -9,16 +9,16 @@ import (
 var Env = New()
 
 type config struct {
-	PORT               int
-	DATABASE_URL       string
-	REDIS_DATABASE_URL string
+	PORT         int
+	DATABASE_URL string
+	REDIS_URL    string
 }
 
 func New() config {
 	return config{
-		PORT:               getEnvAsInt("PORT"),
-		DATABASE_URL:       getEnv("DATABASE_URL"),
-		REDIS_DATABASE_URL: getEnv("REDIS_DATABASE_URL"),
+		PORT:         getEnvAsIntWithFallback("PORT", 3000),
+		DATABASE_URL: getEnv("DATABASE_URL"),
+		REDIS_URL:    getEnv("REDIS_URL"),
 	}
 }
 
@@ -50,4 +50,15 @@ func getEnvAsInt(key string) int {
 	}
 
 	return num
+}
+
+func getEnvAsIntWithFallback(key string, fallback int) int {
+	if val, ok := os.LookupEnv(key); ok {
+		num, err := strconv.Atoi(val)
+		if err != nil {
+			log.Fatalf("ERROR: failed to parse key %s with value %s as int", key, val)
+		}
+		return num
+	}
+	return fallback
 }

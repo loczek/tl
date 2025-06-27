@@ -2,9 +2,9 @@ package cache
 
 import (
 	"context"
-	"os"
 
 	"github.com/gofiber/fiber/v2/log"
+	"github.com/loczek/go-link-shortener/internal/config"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -13,7 +13,7 @@ type RedisStore struct {
 }
 
 func New() *RedisStore {
-	url := os.Getenv("REDIS_URL")
+	url := config.Env.REDIS_URL
 
 	log.Infof("url: %s", url)
 	opts, err := redis.ParseURL(url)
