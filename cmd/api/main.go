@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"log"
+	"log/slog"
 
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/joho/godotenv"
 	"github.com/loczek/go-link-shortener/internal/metrics"
 	"github.com/loczek/go-link-shortener/internal/server"
-	"go.opentelemetry.io/otel"
 )
 
 func main() {
@@ -28,16 +28,24 @@ func main() {
 
 	defer func() {
 		if err := meterProvider.Shutdown(context.Background()); err != nil {
-			log.Error(err)
+			panic(err)
 		}
 	}()
 
-	otel.SetMeterProvider(meterProvider)
+	loggerProvider, err := metrics.NewLoggerProvider(res)
+	if err != nil {
+		panic(err)
+	}
 
-	log.Info("Starting app")
+	defer func() {
+		if err := loggerProvider.Shutdown(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
+
+	slog.Info("Starting app")
 	ctx := context.Background()
 	server := server.New(ctx)
 	server.RegisterRoutes()
-	log.Info("Started")
 	server.Listen(":3000")
 }
