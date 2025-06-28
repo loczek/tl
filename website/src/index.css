@@ -83,3 +83,14 @@ button:focus-visible {
     border-image: url("/bglow.png") 128 / 128px;
     mix-blend-mode: plus-lighter;
 }
+
+.anim-from-bottom {
+    transition-property: opacity, translate;
+    transition-duration: 350ms;
+    transition-timing-function: ease-out;
+    transition-behavior: allow-discrete;
+    @starting-style {
+        opacity: 0;
+        translate: 0px 56px;
+    }
+}
