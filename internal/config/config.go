@@ -32,7 +32,7 @@ func getEnvWithFallback(key string, fallback string) string {
 func getEnv(key string) string {
 	val, ok := os.LookupEnv(key)
 	if !ok {
-		log.Fatalf("ERROR: missing env var %s", key)
+		log.Fatalf("missing env var %s\n", key)
 	}
 
 	return val
@@ -41,12 +41,12 @@ func getEnv(key string) string {
 func getEnvAsInt(key string) int {
 	val, ok := os.LookupEnv(key)
 	if !ok {
-		log.Fatalf("ERROR: missing env var %s", key)
+		log.Fatalf("missing env var %s\n", key)
 	}
 
 	num, err := strconv.Atoi(val)
 	if err != nil {
-		log.Fatalf("ERROR: failed to parse key %s with value %s as int", key, val)
+		log.Fatalf("failed to parse key %s with value %s as int\n", key, val)
 	}
 
 	return num
@@ -56,7 +56,7 @@ func getEnvAsIntWithFallback(key string, fallback int) int {
 	if val, ok := os.LookupEnv(key); ok {
 		num, err := strconv.Atoi(val)
 		if err != nil {
-			log.Fatalf("ERROR: failed to parse key %s with value %s as int", key, val)
+			log.Fatalf("failed to parse key %s with value %s as int\n", key, val)
 		}
 		return num
 	}

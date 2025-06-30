@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"log/slog"
 
 	"github.com/joho/godotenv"
+	"github.com/loczek/go-link-shortener/internal/config"
 	"github.com/loczek/go-link-shortener/internal/metrics"
 	"github.com/loczek/go-link-shortener/internal/server"
 )
@@ -13,7 +14,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalln("error while loading env file")
 	}
 
 	res, err := metrics.NewResource()
@@ -43,9 +44,10 @@ func main() {
 		}
 	}()
 
-	slog.Info("Starting app")
+	log.Println("initializing")
 	ctx := context.Background()
 	server := server.New(ctx)
 	server.RegisterRoutes()
-	server.Listen(":3000")
+	log.Printf("started on port %d", config.Env.PORT)
+	server.Listen(fmt.Sprintf(":%d", config.Env.PORT))
 }

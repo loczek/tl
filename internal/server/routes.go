@@ -45,7 +45,7 @@ func (s *Server) Health(c *fiber.Ctx) error {
 }
 
 func (s *Server) Temp(c *fiber.Ctx) error {
-	log.Info("hit route: temp")
+	log.Println("temp route hit")
 	return c.SendStatus(200)
 }
 

@@ -2,8 +2,9 @@ package cache
 
 import (
 	"context"
+	"fmt"
+	"log"
 
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/loczek/go-link-shortener/internal/config"
 	"github.com/redis/go-redis/v9"
 )
@@ -15,10 +16,9 @@ type RedisStore struct {
 func New() *RedisStore {
 	url := config.Env.REDIS_URL
 
-	log.Infof("url: %s", url)
 	opts, err := redis.ParseURL(url)
 	if err != nil {
-		panic(err)
+		log.Fatalln(fmt.Errorf("failed to parse redis url: %w", err))
 	}
 
 	return &RedisStore{
