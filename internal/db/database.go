@@ -11,7 +11,7 @@ import (
 )
 
 type Store struct {
-	db *sql.DB
+	*sql.DB
 }
 
 func New(ctx context.Context) *Store {
@@ -41,7 +41,7 @@ type UrlStore interface {
 func (s *Store) GetUrl(short_code string) (*Url, error) {
 	response := Url{}
 
-	err := s.db.QueryRow("SELECT id, short_code, original_url, updated_at, created_at FROM urls WHERE short_code = $1", short_code).
+	err := s.QueryRow("SELECT id, short_code, original_url, updated_at, created_at FROM urls WHERE short_code = $1", short_code).
 		Scan(&response.Id, &response.ShortCode, &response.OriginalUrl, &response.UpdatedAt, &response.CreatedAt)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (s *Store) GetUrl(short_code string) (*Url, error) {
 }
 
 func (s *Store) AddUrl(short_code string, original_url string) (int64, error) {
-	stmt, err := s.db.Prepare("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING")
+	stmt, err := s.Prepare("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING")
 	if err != nil {
 		return 0, err
 	}
