@@ -3,17 +3,17 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/url"
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/contrib/otelfiber/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
+
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/gofiber/fiber/v2/utils"
+	fiberutils "github.com/gofiber/fiber/v2/utils"
 	"github.com/loczek/go-link-shortener/internal/base62"
 	"github.com/loczek/go-link-shortener/internal/metrics"
 	"github.com/loczek/go-link-shortener/internal/middleware"
@@ -29,7 +29,7 @@ func (s *Server) RegisterRoutes() {
 	}))
 
 	s.App.Use(requestid.New(requestid.Config{
-		Generator: utils.UUIDv4,
+		Generator: fiberutils.UUIDv4,
 	}))
 
 	s.Static("/", "./website/dist")
