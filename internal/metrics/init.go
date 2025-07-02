@@ -4,63 +4,104 @@ import (
 	"context"
 	"time"
 
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/prometheus"
+	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
+	"go.opentelemetry.io/otel/log/global"
+	skdlog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
-	"go.opentelemetry.io/otel/sdk/resource"
+	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
-func NewResource() (*resource.Resource, error) {
-	return resource.Merge(resource.Default(),
-		resource.NewWithAttributes(
+func NewResource() (*sdkresource.Resource, error) {
+	return sdkresource.Merge(sdkresource.Default(),
+		sdkresource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceName("go-link-shortener"),
 			semconv.ServiceVersion("0.1.0"),
 		))
 }
 
-func NewMeterProviderPrometheus(res *resource.Resource) (*sdkmetric.MeterProvider, error) {
-	exp, err := prometheus.New()
+func NewMeterProviderPrometheus(res *sdkresource.Resource) (*sdkmetric.MeterProvider, error) {
+	exporter, err := prometheus.New()
 	if err != nil {
 		return nil, err
 	}
 
 	meterProvider := sdkmetric.NewMeterProvider(
 		sdkmetric.WithResource(res),
-		sdkmetric.WithReader(exp),
+		sdkmetric.WithReader(exporter),
 	)
+
+	otel.SetMeterProvider(meterProvider)
 
 	return meterProvider, nil
 }
 
-func NewMeterProviderStdout(res *resource.Resource) (*sdkmetric.MeterProvider, error) {
-	exp, err := stdoutmetric.New()
+func NewMeterProviderStdout(res *sdkresource.Resource) (*sdkmetric.MeterProvider, error) {
+	exporter, err := stdoutmetric.New()
 	if err != nil {
 		return nil, err
 	}
 
 	meterProvider := sdkmetric.NewMeterProvider(
 		sdkmetric.WithResource(res),
-		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exp,
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter,
 			sdkmetric.WithInterval(time.Second*5))),
 	)
 
+	otel.SetMeterProvider(meterProvider)
+
 	return meterProvider, nil
 }
 
-func NewMeterProviderHttp(res *resource.Resource) (*sdkmetric.MeterProvider, error) {
-	exp, err := otlpmetrichttp.New(context.Background())
+func NewMeterProviderHttp(res *sdkresource.Resource) (*sdkmetric.MeterProvider, error) {
+	exporter, err := otlpmetrichttp.New(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
 	meterProvider := sdkmetric.NewMeterProvider(
 		sdkmetric.WithResource(res),
-		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exp,
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter,
 			sdkmetric.WithInterval(time.Second*15))),
 	)
 
+	otel.SetMeterProvider(meterProvider)
+
 	return meterProvider, nil
+}
+
+func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error) {
+	exporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())
+	if err != nil {
+		return nil, err
+	}
+
+	exporter2, err := otlploghttp.New(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	loggerProvider := skdlog.NewLoggerProvider(
+		skdlog.WithProcessor(
+			skdlog.NewBatchProcessor(exporter, skdlog.WithExportInterval(time.Second*15)),
+		),
+		skdlog.WithProcessor(
+			skdlog.NewBatchProcessor(exporter2, skdlog.WithExportInterval(time.Second*15)),
+		),
+		skdlog.WithResource(res),
+	)
+
+	global.SetLoggerProvider(loggerProvider)
+
+	// logger := otelslog.NewLogger("go-link-shortener", otelslog.WithLoggerProvider(loggerProvider))
+
+	// slog.SetDefault(logger)
+
+	return loggerProvider, nil
 }
