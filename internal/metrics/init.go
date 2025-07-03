@@ -2,13 +2,15 @@ package metrics
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
+	"github.com/loczek/go-link-shortener/internal/config"
+	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/prometheus"
-	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/log/global"
 	skdlog "go.opentelemetry.io/otel/sdk/log"
@@ -77,12 +79,7 @@ func NewMeterProviderHttp(res *sdkresource.Resource) (*sdkmetric.MeterProvider, 
 }
 
 func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error) {
-	exporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())
-	if err != nil {
-		return nil, err
-	}
-
-	exporter2, err := otlploghttp.New(context.Background())
+	exporter, err := otlploghttp.New(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -91,17 +88,16 @@ func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error
 		skdlog.WithProcessor(
 			skdlog.NewBatchProcessor(exporter, skdlog.WithExportInterval(time.Second*15)),
 		),
-		skdlog.WithProcessor(
-			skdlog.NewBatchProcessor(exporter2, skdlog.WithExportInterval(time.Second*15)),
-		),
 		skdlog.WithResource(res),
 	)
 
-	global.SetLoggerProvider(loggerProvider)
+	if config.IsProd() || config.LOG_TO_STDOUT {
+		global.SetLoggerProvider(loggerProvider)
 
-	// logger := otelslog.NewLogger("go-link-shortener", otelslog.WithLoggerProvider(loggerProvider))
+		logger := otelslog.NewLogger("go-link-shortener", otelslog.WithLoggerProvider(loggerProvider))
 
-	// slog.SetDefault(logger)
+		slog.SetDefault(logger)
+	}
 
 	return loggerProvider, nil
 }
