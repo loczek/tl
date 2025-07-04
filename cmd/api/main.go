@@ -48,6 +48,6 @@ func main() {
 	ctx := context.Background()
 	server := server.New(ctx)
 	server.RegisterRoutes()
-	log.Printf("started on port %d", config.Env.PORT)
-	server.Listen(fmt.Sprintf(":%d", config.Env.PORT))
+	log.Printf("started on port %d", config.PORT)
+	server.Listen(fmt.Sprintf(":%d", config.PORT))
 }

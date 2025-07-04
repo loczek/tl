@@ -14,9 +14,7 @@ type RedisStore struct {
 }
 
 func New() *RedisStore {
-	url := config.Env.REDIS_URL
-
-	opts, err := redis.ParseURL(url)
+	opts, err := redis.ParseURL(config.REDIS_URL)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("failed to parse redis url: %w", err))
 	}

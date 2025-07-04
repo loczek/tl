@@ -15,7 +15,7 @@ type Store struct {
 }
 
 func New(ctx context.Context) *Store {
-	db, err := sql.Open("pgx", config.Env.DATABASE_URL)
+	db, err := sql.Open("pgx", config.DATABASE_URL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

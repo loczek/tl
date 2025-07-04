@@ -6,20 +6,20 @@ import (
 	"strconv"
 )
 
-var Env = New()
+var (
+	ENV           string = getEnvWithFallback("ENV", "production")
+	PORT          int    = getEnvAsIntWithFallback("PORT", 3000)
+	LOG_TO_STDOUT bool   = true
+	DATABASE_URL  string = getEnv("DATABASE_URL")
+	REDIS_URL     string = getEnv("REDIS_URL")
+)
 
-type config struct {
-	PORT         int
-	DATABASE_URL string
-	REDIS_URL    string
+func IsProd() bool {
+	return ENV != "development"
 }
 
-func New() config {
-	return config{
-		PORT:         getEnvAsIntWithFallback("PORT", 3000),
-		DATABASE_URL: getEnv("DATABASE_URL"),
-		REDIS_URL:    getEnv("REDIS_URL"),
-	}
+func IsDev() bool {
+	return !IsProd()
 }
 
 func getEnvWithFallback(key string, fallback string) string {
