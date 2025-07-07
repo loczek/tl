@@ -61,7 +61,7 @@ function App() {
             <div
               onClick={() => {
                 navigator.clipboard.writeText(
-                  "http://localhost:3000/" + shortCode
+                  "http://localhost:3000/" + shortCode,
                 );
               }}
               className="px-6 py-4 bg-[#1C1C1C] rounded-md w-96 inline-block"
