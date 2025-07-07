@@ -38,14 +38,7 @@ func (s *Store) GetUrl(short_code string) (*Url, error) {
 }
 
 func (s *Store) AddUrl(short_code string, original_url string) (int64, error) {
-	stmt, err := s.db.Prepare("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING")
-	if err != nil {
-		return 0, err
-	}
-
-	defer stmt.Close()
-
-	res, err := stmt.Exec(short_code, original_url)
+	res, err := s.db.Exec("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING", original_url)
 	if err != nil {
 		return 0, err
 	}
