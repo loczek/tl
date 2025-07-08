@@ -1,0 +1,45 @@
+package report
+
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
+	"github.com/loczek/go-link-shortener/internal/cache"
+	"github.com/loczek/go-link-shortener/services/shortener"
+)
+
+type Handler struct {
+	reportStore ReportStore
+	urlStore    shortener.UrlStore
+	cache       *cache.RedisStore
+}
+
+func NewHandler(db ReportStore, urlStore shortener.UrlStore, cache *cache.RedisStore) *Handler {
+	return &Handler{db, urlStore, cache}
+}
+
+type ReportUrlPayload struct {
+	ShortCode string `json:"short_code" validate:"required,gte=6,lte=8"`
+}
+
+func (h *Handler) ReportLink(c *fiber.Ctx) error {
+	body := new(ReportUrlPayload)
+	if err := c.BodyParser(body); err != nil {
+		return fiber.ErrBadRequest
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(body); err != nil {
+		return err
+	}
+
+	val, err := h.urlStore.GetUrl(body.ShortCode)
+	if err != nil {
+		return fiber.ErrInternalServerError
+	}
+
+	if val == nil {
+		return fiber.ErrNotFound
+	}
+
+	return c.SendStatus(200)
+}
