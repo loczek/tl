@@ -91,7 +91,7 @@ func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error
 		skdlog.WithResource(res),
 	)
 
-	if config.IsProd() || config.LOG_TO_STDOUT {
+	if config.IsProd() || !config.LOG_TO_STDOUT {
 		global.SetLoggerProvider(loggerProvider)
 
 		logger := otelslog.NewLogger("go-link-shortener", otelslog.WithLoggerProvider(loggerProvider))
