@@ -30,22 +30,6 @@ func NewApiServer(db *sql.DB, cache *cache.RedisStore) *ApiServer {
 }
 
 func (s *ApiServer) Run() *fiber.App {
-	// db := database.New(context.Background())
-	// err := db.Ping()
-	// if err != nil {
-	// 	log.Fatal(fmt.Errorf("failed to ping postgres: %w", err))
-	// }
-
-	// log.Println("connected to postgres")
-
-	// cache := cache.New()
-	// _, err = cache.Ping(context.Background()).Result()
-	// if err != nil {
-	// 	log.Fatalln(fmt.Errorf("failed to ping redis: %w", err))
-	// }
-
-	// log.Println("connected to redis")
-
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
