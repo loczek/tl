@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	fiberutils "github.com/gofiber/fiber/v2/utils"
@@ -47,6 +48,8 @@ func (s *ApiServer) Run() *fiber.App {
 
 	// api := app.Group("/api")
 	// v1 := api.Group("/v1")
+	app.Use(logger.New(logger.Config{}))
+	// app.Use(middleware.Logger())
 	app.Use(middleware.MetricsByName())
 
 	app.Static("/", "./website/dist").Name("index")
@@ -69,7 +72,7 @@ func (s *ApiServer) Run() *fiber.App {
 
 	reportStore := report.NewStore(s.db)
 	reportHandler := report.NewHandler(reportStore, shortener.NewStore(s.db), s.cache)
-	app.Get("/api/report", reportHandler.ReportLink).Name("api.report")
+	app.Post("/api/report", reportHandler.ReportLink).Name("api.report")
 
 	// shortenerStore := shortener.NewStore(s.db)
 	shortenerHandler := shortener.NewHandler(
