@@ -17,12 +17,12 @@ func NewHandler(db ReportStore, urlStore shortener.UrlStore, cache *cache.RedisS
 	return &Handler{db, urlStore, cache}
 }
 
-type ReportUrlPayload struct {
+type Payload struct {
 	ShortCode string `json:"short_code" validate:"required,gte=6,lte=8"`
 }
 
 func (h *Handler) ReportLink(c *fiber.Ctx) error {
-	body := new(ReportUrlPayload)
+	body := new(Payload)
 	if err := c.BodyParser(body); err != nil {
 		return fiber.ErrBadRequest
 	}
@@ -39,6 +39,11 @@ func (h *Handler) ReportLink(c *fiber.Ctx) error {
 
 	if val == nil {
 		return fiber.ErrNotFound
+	}
+
+	_, err = h.reportStore.CreateReport(val.Id)
+	if err != nil {
+		return fiber.ErrInternalServerError
 	}
 
 	return c.SendStatus(200)
