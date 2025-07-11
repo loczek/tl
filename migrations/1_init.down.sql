@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP TABLE reports;
+
+DROP TABLE urls;
+
+COMMIT;
