@@ -1,6 +1,9 @@
 package report
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type Store struct {
 	db *sql.DB
@@ -12,14 +15,14 @@ func NewStore(db *sql.DB) *Store {
 
 type ReportStore interface {
 	GetReportByID(int) (*Report, error)
-	CreateReport(string) (int64, error)
+	CreateReport(int) (int64, error)
 }
 
 type Report struct {
-	Id        string `json:"id"`
-	UrlId     string `json:"url_id"`
-	UpdatedAt string `json:"updated_at"`
-	CreatedAt string `json:"created_at"`
+	Id        int       `json:"id"`
+	UrlId     int       `json:"url_id"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (s *Store) GetReportByID(id int) (*Report, error) {
@@ -34,8 +37,8 @@ func (s *Store) GetReportByID(id int) (*Report, error) {
 	return &response, nil
 }
 
-func (s *Store) CreateReport(short_code string) (int64, error) {
-	res, err := s.db.Exec("INSERT INTO reports (short_code) VALUES ($1)")
+func (s *Store) CreateReport(id int) (int64, error) {
+	res, err := s.db.Exec("INSERT INTO reports (url_id) VALUES ($1)", id)
 	if err != nil {
 		return 0, err
 	}
