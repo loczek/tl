@@ -2,6 +2,7 @@ package shortener
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Store struct {
@@ -18,11 +19,11 @@ type UrlStore interface {
 }
 
 type Url struct {
-	Id          string `json:"id"`
-	ShortCode   string `json:"short_code"`
-	OriginalUrl string `json:"original_url"`
-	UpdatedAt   string `json:"updated_at"`
-	CreatedAt   string `json:"created_at"`
+	Id          int       `json:"id"`
+	ShortCode   string    `json:"short_code"`
+	OriginalUrl string    `json:"original_url"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 func (s *Store) GetUrl(short_code string) (*Url, error) {
