@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	fiberutils "github.com/gofiber/fiber/v2/utils"
@@ -36,12 +37,13 @@ func (s *ApiServer) Run() *fiber.App {
 		AllowOrigins: "http://localhost:5173",
 		AllowHeaders: "Origin,Content-Type,Accept",
 	}))
-
+	app.Use(limiter.New(limiter.Config{
+		Max: 20,
+	}))
+	app.Use(recover.New())
 	app.Use(requestid.New(requestid.Config{
 		Generator: fiberutils.UUIDv4,
 	}))
-
-	app.Use(recover.New())
 
 	// api := app.Group("/api")
 	// v1 := api.Group("/v1")
