@@ -19,6 +19,9 @@ services:
     ports:
       - 3000:3000
     environment:
+      - ENV=development
+      - OTEL_LOGS_EXPORTER=none
+      - LOG_TO_STDOUT=true
       - DATABASE_URL=postgres://postgres:example@db:5432/postgres
       - REDIS_URL=redis://rdb:6379/0
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://prometheus:9090/api/v1/otlp/v1/metrics
@@ -52,6 +55,18 @@ services:
       - redis-data:/data
     ports:
       - 6379:6379
+  # otel-collector:
+  #   image: otel/opentelemetry-collector-contrib
+  #   volumes:
+  #     - ./collector/config.yaml:/etc/otelcol-contrib/config.yaml
+  #   ports:
+  #     - 1888:1888 # pprof extension
+  #     - 8888:8888 # Prometheus metrics exposed by the Collector
+  #     - 8889:8889 # Prometheus exporter metrics
+  #     - 13133:13133 # health_check extension
+  #     - 4317:4317 # OTLP gRPC receiver
+  #     - 4318:4318 # OTLP http receiver
+  #     - 55679:55679 # zpages extension
   loki:
     image: grafana/loki
     ports:
@@ -59,6 +74,7 @@ services:
     volumes:
       - loki-data:/loki
       - ./loki/loki.yaml:/etc/loki/loki.yaml
+    attach: false
   prometheus:
     image: prom/prometheus
     command:
@@ -70,6 +86,7 @@ services:
     volumes:
       - prometheus-data:/prometheus
       - ./prometheus:/etc/prometheus/
+    attach: false
   grafana:
     image: grafana/grafana
     ports:
@@ -77,6 +94,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana:/etc/grafana/provisioning/datasources/
+    attach: false
 
 volumes:
   db-data:
