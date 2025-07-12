@@ -1,9 +1,12 @@
 package report
 
 import (
+	"context"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/loczek/go-link-shortener/internal/cache"
+	metrics "github.com/loczek/go-link-shortener/internal/telemetry"
 	"github.com/loczek/go-link-shortener/services/shortener"
 )
 
@@ -45,6 +48,8 @@ func (h *Handler) ReportLink(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.ErrInternalServerError
 	}
+
+	metrics.ReportCounter.Add(context.Background(), 1)
 
 	return c.SendStatus(200)
 }

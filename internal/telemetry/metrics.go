@@ -11,6 +11,7 @@ var (
 	CacheRequestsCounter metric.Int64Counter
 	CollisionsCounter    metric.Int64Counter
 	HttpRequestsCounter  metric.Int64Counter
+	ReportCounter        metric.Int64Counter
 )
 
 func init() {
@@ -27,6 +28,11 @@ func init() {
 	HttpRequestsCounter = createIntCounter(
 		"http.requests",
 		metric.WithDescription("Number of api hits"),
+		metric.WithUnit("{count}"),
+	)
+	ReportCounter = createIntCounter(
+		"reports",
+		metric.WithDescription("Number of reports made"),
 		metric.WithUnit("{count}"),
 	)
 }
