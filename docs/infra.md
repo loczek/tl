@@ -42,7 +42,11 @@
 - Hetzner
 - Oracle Cloud
 
-# AWS
+## AWS Services
 
 - EC2
 - ECS
+- Aurora DSQL
+- Route 53
+- CloudFront
+- CloudWatch
