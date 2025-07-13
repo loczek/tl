@@ -33,15 +33,22 @@ body,
 
 .container {
     width: 100%;
-    @media (width >= 40rem /* 640px */) {
-        max-width: 40rem /* 640px */;
+    /* 640px */
+    @media (width >= 40rem) {
+        max-width: 40rem;
     }
-    @media (width >= 48rem /* 768px */) {
-        max-width: 48rem /* 768px */;
+    /* 768px */
+    @media (width >= 48rem) {
+        max-width: 48rem;
     }
-    @media (width >= 64rem /* 1024px */) {
-        max-width: 64rem /* 1024px */;
+    /* 1024px */
+    @media (width >= 64rem) {
+        max-width: 64rem;
     }
+    /* 1280px */
+    /* @media (width >= 80rem) {
+        max-width: 80rem;
+    } */
 }
 
 /* body {
