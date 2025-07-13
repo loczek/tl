@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	fiberlogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	fiberutils "github.com/gofiber/fiber/v2/utils"
@@ -32,7 +32,11 @@ func NewApiServer(db *sql.DB, cache *cache.RedisStore) *ApiServer {
 }
 
 func (s *ApiServer) Run() *fiber.App {
+	log := slog.Default().With(slog.String("app", "go-link-shortener"))
+
 	app := fiber.New()
+
+	app.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler())).Name("metrics")
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:5173",
@@ -48,7 +52,7 @@ func (s *ApiServer) Run() *fiber.App {
 
 	// api := app.Group("/api")
 	// v1 := api.Group("/v1")
-	app.Use(logger.New(logger.Config{}))
+	app.Use(fiberlogger.New())
 	// app.Use(middleware.Logger())
 	app.Use(middleware.MetricsByName())
 
@@ -58,12 +62,10 @@ func (s *ApiServer) Run() *fiber.App {
 		File: "./website/dist/favicon.ico",
 	}))
 
-	app.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler())).Name("metrics")
-
-	healthHandler := health.NewHandler(slog.Default().With(slog.String("service", "health")))
+	healthHandler := health.NewHandler(log.With(slog.String("service", "health")))
 	app.Get("/health", healthHandler.Health).Name("health")
 
-	tempHandler := temp.NewHandler(slog.Default().With(slog.String("service", "temp")))
+	tempHandler := temp.NewHandler(log.With(slog.String("service", "temp")))
 	app.Get("/temp", tempHandler.Temp).Name("temp")
 	app.Get("/temp/notfound", tempHandler.NotFound).Name("temp.notfound")
 	app.Get("/temp/found", tempHandler.Found).Name("temp.found")
@@ -78,7 +80,7 @@ func (s *ApiServer) Run() *fiber.App {
 	shortenerHandler := shortener.NewHandler(
 		shortener.NewStore(s.db),
 		s.cache,
-		slog.Default().With(slog.String("service", "shortener")),
+		log.With(slog.String("service", "shortener")),
 	)
 	app.Post("/api/add", shortenerHandler.AddShortenedLink).Name("api.add")
 	app.Get("/:hash", shortenerHandler.GetUnshortenedLink).Name("hash")
