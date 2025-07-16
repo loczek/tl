@@ -43,7 +43,7 @@ func (s *ApiServer) Run() *fiber.App {
 		AllowHeaders: "Origin,Content-Type,Accept",
 	}))
 	app.Use(limiter.New(limiter.Config{
-		Max: 20,
+		Max: 50,
 	}))
 	app.Use(recover.New())
 	app.Use(requestid.New(requestid.Config{
