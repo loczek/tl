@@ -85,5 +85,9 @@ func (s *ApiServer) Run() *fiber.App {
 	app.Post("/api/add", shortenerHandler.AddShortenedLink).Name("api.add")
 	app.Get("/:hash", shortenerHandler.GetUnshortenedLink).Name("hash")
 
+	app.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(404)
+	})
+
 	return app
 }
