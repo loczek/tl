@@ -9,7 +9,7 @@ import (
 var (
 	ENV           string = getEnvWithFallback("ENV", "production")
 	PORT          int    = getEnvAsIntWithFallback("PORT", 3000)
-	LOG_TO_STDOUT bool   = true
+	LOG_TO_STDOUT bool   = getEnv("LOG_TO_STDOUT") == "true"
 	DATABASE_URL  string = getEnv("DATABASE_URL")
 	REDIS_URL     string = getEnv("REDIS_URL")
 )
