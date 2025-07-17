@@ -67,6 +67,17 @@ services:
   #     - 4317:4317 # OTLP gRPC receiver
   #     - 4318:4318 # OTLP http receiver
   #     - 55679:55679 # zpages extension
+  tempo:
+    image: grafana/tempo
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - 3200:3200 # tempo
+      - 9095:9095 # tempo grpc
+      - 4317:4317 # otlp grpc
+      - 4318:4318 # otlp http
   loki:
     image: grafana/loki
     ports:
@@ -102,3 +113,4 @@ volumes:
   prometheus-data:
   grafana-data:
   loki-data:
+  tempo-data:
