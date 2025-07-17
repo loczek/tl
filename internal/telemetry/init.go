@@ -11,12 +11,15 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/prometheus"
+	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/log/global"
 	skdlog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
 )
 
@@ -104,4 +107,20 @@ func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error
 	}
 
 	return loggerProvider, nil
+}
+
+func NewTracerProvider(res *sdkresource.Resource) (*sdktrace.TracerProvider, error) {
+	exp, err := otlptracehttp.New(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	traceProvider := sdktrace.NewTracerProvider(
+		sdktrace.WithResource(res),
+		sdktrace.WithSpanProcessor(sdktrace.NewBatchSpanProcessor(exp)),
+	)
+
+	otel.SetTracerProvider(traceProvider)
+
+	return traceProvider, nil
 }
