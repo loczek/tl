@@ -19,12 +19,12 @@ func main() {
 		log.Fatalln("error while loading env file")
 	}
 
-	res, err := metrics.NewResource()
+	res, err := telemetry.NewResource()
 	if err != nil {
 		panic(err)
 	}
 
-	meterProvider, err := metrics.NewMeterProviderPrometheus(res)
+	meterProvider, err := telemetry.NewMeterProviderPrometheus(res)
 	if err != nil {
 		panic(err)
 	}
