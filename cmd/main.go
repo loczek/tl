@@ -10,7 +10,7 @@ import (
 	"github.com/loczek/go-link-shortener/internal/cache"
 	"github.com/loczek/go-link-shortener/internal/config"
 	"github.com/loczek/go-link-shortener/internal/db"
-	metrics "github.com/loczek/go-link-shortener/internal/telemetry"
+	"github.com/loczek/go-link-shortener/internal/telemetry"
 )
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 		}
 	}()
 
-	loggerProvider, err := metrics.NewLoggerProvider(res)
+	loggerProvider, err := telemetry.NewLoggerProvider(res)
 	if err != nil {
 		panic(err)
 	}

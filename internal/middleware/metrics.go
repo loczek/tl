@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
-	metrics "github.com/loczek/go-link-shortener/internal/telemetry"
+	"github.com/loczek/go-link-shortener/internal/telemetry/metrics"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 )
