@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/loczek/go-link-shortener/internal/config"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
@@ -20,11 +21,14 @@ import (
 )
 
 func NewResource() (*sdkresource.Resource, error) {
+	instanceId := uuid.New()
+
 	return sdkresource.Merge(sdkresource.Default(),
 		sdkresource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceName("go-link-shortener"),
 			semconv.ServiceVersion("0.1.0"),
+			semconv.ServiceInstanceID(instanceId.String()),
 		))
 }
 
