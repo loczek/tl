@@ -12,7 +12,7 @@ func Logger() func(c *fiber.Ctx) error {
 		start := time.Now()
 		err := c.Next()
 		end := time.Since(start)
-		slog.Info("",
+		slog.Info("got request",
 			slog.String("method", c.Route().Method),
 			slog.String("path", c.Route().Path),
 			slog.String("time", end.String()),
