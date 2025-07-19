@@ -21,6 +21,12 @@ datasources:
           matcherType: label
           matcherRegex: trace_id
           url: "$${__value.raw}"
+        # - name: span_id
+        #   datasourceUid: tempo
+        #   urlDisplayLabel: "View Span"
+        #   matcherType: label
+        #   matcherRegex: span_id
+        #   url: "$${__value.raw}"
   - name: Tempo
     type: tempo
     uid: tempo
