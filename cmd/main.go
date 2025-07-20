@@ -46,6 +46,17 @@ func main() {
 		}
 	}()
 
+	tracerProvider, err := telemetry.NewTracerProvider(res)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := tracerProvider.Shutdown(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
+
 	log.Println("initializing")
 	database := db.New(context.Background())
 	log.Println("connected to postgresql")

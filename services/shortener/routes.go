@@ -12,9 +12,13 @@ import (
 	"github.com/loczek/go-link-shortener/internal/base62"
 	"github.com/loczek/go-link-shortener/internal/cache"
 	"github.com/loczek/go-link-shortener/internal/telemetry/metrics"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/trace"
 )
+
+var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
 
 type Handler struct {
 	db     UrlStore
@@ -27,11 +31,13 @@ func NewHandler(store UrlStore, cache *cache.RedisStore, logger *slog.Logger) *H
 }
 
 func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
 	hash := c.Params("hash")
 
-	h.logger.Info("test", slog.String("name", c.Route().Name), slog.String("path", c.Route().Path))
+	h.logger.InfoContext(ctx, "test", slog.String("name", c.Route().Name), slog.String("path", c.Route().Path))
 
-	val, err := h.cache.GetCacheKey(context.Background(), fmt.Sprintf("get:%s", hash))
+	val, err := h.cache.GetCacheKey(ctx, fmt.Sprintf("get:%s", hash))
 	if err != nil {
 		return err
 	}
@@ -42,7 +48,7 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 	} else {
 		metrics.CacheRequestsCounter.Add(c.Context(), 1, metric.WithAttributes(attribute.String("type", "miss")))
 
-		data, err := h.db.GetUrl(hash)
+		data, err := h.db.GetUrl(ctx, hash)
 		if err != nil {
 			return err
 		}
@@ -65,6 +71,10 @@ type Response struct {
 }
 
 func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	span := trace.SpanFromContext(ctx)
+
 	body := new(Payload)
 	if err := c.BodyParser(body); err != nil {
 		return fiber.ErrBadRequest
@@ -85,7 +95,7 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 
 	for i < 5 {
 		seqInner := base62.RandomSeqRange(6, 8)
-		rowsAffectedInner, err := h.db.AddUrl(seqInner, u.String())
+		rowsAffectedInner, err := h.db.AddUrl(ctx, seqInner, u.String())
 		if err != nil {
 			return err
 		}
@@ -96,6 +106,10 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 			break
 		}
 		i += 1
+	}
+
+	if i > 0 {
+		span.SetAttributes(attribute.Int("retries", i))
 	}
 
 	if seq == "" {

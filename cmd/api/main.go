@@ -53,7 +53,7 @@ func (s *ApiServer) Run() *fiber.App {
 	// api := app.Group("/api")
 	// v1 := api.Group("/v1")
 	app.Use(fiberlogger.New())
-	// app.Use(middleware.Logger())
+	app.Use(middleware.AttachTraceContext())
 	app.Use(middleware.MetricsByName())
 
 	app.Static("/", "./website/dist").Name("index")

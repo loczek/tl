@@ -25,6 +25,8 @@ type Payload struct {
 }
 
 func (h *Handler) ReportLink(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
 	body := new(Payload)
 	if err := c.BodyParser(body); err != nil {
 		return fiber.ErrBadRequest
@@ -35,7 +37,7 @@ func (h *Handler) ReportLink(c *fiber.Ctx) error {
 		return err
 	}
 
-	val, err := h.urlStore.GetUrl(body.ShortCode)
+	val, err := h.urlStore.GetUrl(ctx, body.ShortCode)
 	if err != nil {
 		return fiber.ErrInternalServerError
 	}
@@ -44,7 +46,7 @@ func (h *Handler) ReportLink(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
-	_, err = h.reportStore.CreateReport(val.Id)
+	_, err = h.reportStore.CreateReport(ctx, val.Id)
 	if err != nil {
 		return fiber.ErrInternalServerError
 	}
