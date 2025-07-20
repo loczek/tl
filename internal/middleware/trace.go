@@ -1,0 +1,54 @@
+package middleware
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/gofiber/fiber/v2"
+	fiberutils "github.com/gofiber/fiber/v2/utils"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
+	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
+	"go.opentelemetry.io/otel/trace"
+)
+
+var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
+
+func AttachTraceContext() func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		ctx, span := tracer.Start(
+			context.Background(),
+			fmt.Sprintf("%s",
+				string(c.Request().Header.Method()),
+			),
+			trace.WithAttributes(
+				semconv.HTTPRequestMethodKey.String(fiberutils.CopyString(c.Method())),
+			),
+			trace.WithSpanKind(trace.SpanKindServer),
+		)
+		defer span.End()
+
+		c.SetUserContext(ctx)
+
+		err := c.Next()
+
+		span.SetName(
+			fmt.Sprintf("%s %s",
+				string(c.Request().Header.Method()),
+				c.Route().Path,
+			),
+		)
+
+		span.SetAttributes(
+			semconv.HTTPResponseStatusCode(c.Response().StatusCode()),
+		)
+
+		if err != nil {
+			span.SetStatus(codes.Error, err.Error())
+		} else {
+			span.SetStatus(codes.Ok, "responded")
+		}
+
+		return err
+	}
+}
