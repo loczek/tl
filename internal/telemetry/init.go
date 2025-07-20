@@ -13,7 +13,6 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/prometheus"
-	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/log/global"
 	skdlog "go.opentelemetry.io/otel/sdk/log"
@@ -92,16 +91,19 @@ func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error
 	}
 
 	loggerProvider := skdlog.NewLoggerProvider(
+		skdlog.WithResource(res),
 		skdlog.WithProcessor(
 			skdlog.NewBatchProcessor(exporter, skdlog.WithExportInterval(time.Second*15)),
 		),
-		skdlog.WithResource(res),
 	)
 
 	if config.IsProd() || !config.LOG_TO_STDOUT {
 		global.SetLoggerProvider(loggerProvider)
 
-		logger := otelslog.NewLogger("go-link-shortener", otelslog.WithLoggerProvider(loggerProvider))
+		logger := otelslog.NewLogger(
+			"go-link-shortener",
+			otelslog.WithLoggerProvider(loggerProvider),
+		)
 
 		slog.SetDefault(logger)
 	}
@@ -110,14 +112,14 @@ func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error
 }
 
 func NewTracerProvider(res *sdkresource.Resource) (*sdktrace.TracerProvider, error) {
-	exp, err := otlptracehttp.New(context.Background())
+	exporter, err := otlptracehttp.New(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
 	traceProvider := sdktrace.NewTracerProvider(
 		sdktrace.WithResource(res),
-		sdktrace.WithSpanProcessor(sdktrace.NewBatchSpanProcessor(exp)),
+		sdktrace.WithSpanProcessor(sdktrace.NewBatchSpanProcessor(exporter)),
 	)
 
 	otel.SetTracerProvider(traceProvider)
