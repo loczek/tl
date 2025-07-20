@@ -45,21 +45,21 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 	if val != "" {
 		metrics.CacheRequestsCounter.Add(c.Context(), 1, metric.WithAttributes(attribute.String("type", "hit")))
 		return c.Redirect(val)
-	} else {
-		metrics.CacheRequestsCounter.Add(c.Context(), 1, metric.WithAttributes(attribute.String("type", "miss")))
-
-		data, err := h.db.GetUrl(ctx, hash)
-		if err != nil {
-			return err
-		}
-
-		err = h.cache.SetEx(context.Background(), fmt.Sprintf("get:%s", hash), data.OriginalUrl, time.Minute).Err()
-		if err != nil {
-			return err
-		}
-
-		return c.Redirect(data.OriginalUrl)
 	}
+
+	metrics.CacheRequestsCounter.Add(c.Context(), 1, metric.WithAttributes(attribute.String("type", "miss")))
+
+	data, err := h.db.GetUrl(ctx, hash)
+	if err != nil {
+		return err
+	}
+
+	err = h.cache.SetEx(context.Background(), fmt.Sprintf("get:%s", hash), data.OriginalUrl, time.Minute).Err()
+	if err != nil {
+		return err
+	}
+
+	return c.Redirect(data.OriginalUrl)
 }
 
 type Payload struct {
