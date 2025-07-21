@@ -1,7 +1,8 @@
 package shortener
 
 import (
-	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/url"
@@ -51,7 +52,12 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 
 	data, err := h.urlStore.GetUrl(ctx, hash)
 	if err != nil {
-		return err
+		if errors.Is(err, sql.ErrNoRows) {
+			return fiber.ErrNotFound
+		} else {
+			h.logger.ErrorContext(ctx, err.Error())
+			return fiber.ErrInternalServerError
+		}
 	}
 
 	err = h.cache.SetCacheKey(ctx, fmt.Sprintf("get:%s", hash), data.OriginalURL, time.Minute)
