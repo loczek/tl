@@ -23,6 +23,14 @@ func AttachTraceContext() func(c *fiber.Ctx) error {
 			),
 			trace.WithAttributes(
 				semconv.HTTPRequestMethodKey.String(fiberutils.CopyString(c.Method())),
+				// fiber middleware
+				semconv.URLScheme(fiberutils.CopyString(c.Protocol())),
+				semconv.HTTPRequestBodySize(c.Request().Header.ContentLength()),
+				semconv.URLPath(string(fiberutils.CopyBytes(c.Request().URI().Path()))),
+				semconv.URLQuery(c.Request().URI().QueryArgs().String()),
+				semconv.URLFull(fiberutils.CopyString(c.OriginalURL())),
+				semconv.UserAgentOriginal(string(fiberutils.CopyBytes(c.Request().Header.UserAgent()))),
+				semconv.ServerAddress(fiberutils.CopyString(c.Hostname())),
 			),
 			trace.WithSpanKind(trace.SpanKindServer),
 		)
