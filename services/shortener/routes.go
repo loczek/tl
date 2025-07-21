@@ -21,9 +21,9 @@ import (
 var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
 
 type Handler struct {
-	db     UrlStore
-	cache  *cache.RedisStore
-	logger *slog.Logger
+	urlStore UrlStore
+	cache    *cache.RedisStore
+	logger   *slog.Logger
 }
 
 func NewHandler(store UrlStore, cache *cache.RedisStore, logger *slog.Logger) *Handler {
@@ -49,7 +49,7 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 
 	metrics.CacheRequestsCounter.Add(c.Context(), 1, metric.WithAttributes(attribute.String("type", "miss")))
 
-	data, err := h.db.GetUrl(ctx, hash)
+	data, err := h.urlStore.GetUrl(ctx, hash)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 
 	for i < 5 {
 		seqInner := base62.RandomSeqRange(6, 8)
-		rowsAffectedInner, err := h.db.AddUrl(ctx, seqInner, u.String())
+		rowsAffectedInner, err := h.urlStore.AddUrl(ctx, seqInner, u.String())
 		if err != nil {
 			return err
 		}
