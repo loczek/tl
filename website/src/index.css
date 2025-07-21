@@ -94,7 +94,12 @@ button:focus-visible {
 .anim-from-bottom {
     transition-property: opacity, translate;
     transition-duration: 350ms;
-    transition-timing-function: ease-out;
+    transition-timing-function: cubic-bezier(
+        0,
+        0,
+        0.4,
+        1
+    ); /* faster ease-out */
     transition-behavior: allow-discrete;
     @starting-style {
         opacity: 0;
