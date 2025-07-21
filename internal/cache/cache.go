@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/loczek/go-link-shortener/internal/config"
 	"github.com/redis/go-redis/v9"
@@ -18,6 +19,11 @@ var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
 
 type RedisStore struct {
 	*redis.Client
+}
+
+type Cache interface {
+	GetCacheKey(ctx context.Context, key string) (string, error)
+	SetCacheKey(ctx context.Context, key string, val string, expiration time.Duration) error
 }
 
 func New() *RedisStore {
@@ -52,4 +58,28 @@ func (r *RedisStore) GetCacheKey(ctx context.Context, key string) (string, error
 		span.RecordError(err)
 		return val, err
 	}
+}
+
+func (r *RedisStore) SetCacheKey(ctx context.Context, key string, val string, expiration time.Duration) error {
+	ctx, span := tracer.Start(
+		ctx,
+		"SETX",
+		trace.WithAttributes(
+			semconv.DBSystemNameRedis,
+			attribute.String("key", key),
+			attribute.String("value", val),
+		),
+	)
+	defer span.End()
+
+	err := r.SetEx(context.Background(), key, val, time.Minute).Err()
+	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
+		return err
+	}
+
+	span.SetStatus(codes.Ok, "")
+
+	return nil
 }

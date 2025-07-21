@@ -13,10 +13,10 @@ import (
 type Handler struct {
 	reportStore ReportStore
 	urlStore    shortener.UrlStore
-	cache       *cache.RedisStore
+	cache       cache.Cache
 }
 
-func NewHandler(db ReportStore, urlStore shortener.UrlStore, cache *cache.RedisStore) *Handler {
+func NewHandler(db ReportStore, urlStore shortener.UrlStore, cache cache.Cache) *Handler {
 	return &Handler{db, urlStore, cache}
 }
 

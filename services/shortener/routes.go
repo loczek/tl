@@ -22,11 +22,11 @@ var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
 
 type Handler struct {
 	urlStore UrlStore
-	cache    *cache.RedisStore
+	cache    cache.Cache
 	logger   *slog.Logger
 }
 
-func NewHandler(store UrlStore, cache *cache.RedisStore, logger *slog.Logger) *Handler {
+func NewHandler(store UrlStore, cache cache.Cache, logger *slog.Logger) *Handler {
 	return &Handler{store, cache, logger}
 }
 
@@ -54,7 +54,7 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = h.cache.SetEx(context.Background(), fmt.Sprintf("get:%s", hash), data.OriginalUrl, time.Minute).Err()
+	err = h.cache.SetCacheKey(ctx, fmt.Sprintf("get:%s", hash), data.OriginalURL, time.Minute)
 	if err != nil {
 		return err
 	}
