@@ -46,7 +46,7 @@ func (h *Handler) ReportLink(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
-	_, err = h.reportStore.CreateReport(ctx, val.Id)
+	_, err = h.reportStore.CreateReport(ctx, val.ID)
 	if err != nil {
 		return fiber.ErrInternalServerError
 	}

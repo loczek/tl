@@ -22,13 +22,13 @@ func NewStore(db *sql.DB) *Store {
 }
 
 type ReportStore interface {
-	GetReportByID(context.Context, int) (*Report, error)
-	CreateReport(context.Context, int) (int64, error)
+	GetReportByID(ctx context.Context, id int) (*Report, error)
+	CreateReport(ctx context.Context, urlID int) (int64, error)
 }
 
 type Report struct {
-	Id        int       `json:"id"`
-	UrlId     int       `json:"url_id"`
+	ID        int       `json:"id"`
+	URLID     int       `json:"url_id"`
 	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -47,7 +47,7 @@ func (s *Store) GetReportByID(ctx context.Context, id int) (*Report, error) {
 	response := Report{}
 
 	err := s.db.QueryRow("SELECT id, url_id, updated_at, created_at FROM reports WHERE id = $1", id).
-		Scan(&response.Id, &response.UrlId, &response.UpdatedAt, &response.CreatedAt)
+		Scan(&response.ID, &response.URLID, &response.UpdatedAt, &response.CreatedAt)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
@@ -59,7 +59,7 @@ func (s *Store) GetReportByID(ctx context.Context, id int) (*Report, error) {
 	return &response, nil
 }
 
-func (s *Store) CreateReport(ctx context.Context, id int) (int64, error) {
+func (s *Store) CreateReport(ctx context.Context, urlID int) (int64, error) {
 	ctx, span := tracer.Start(
 		ctx,
 		"INSERT report",
@@ -70,7 +70,7 @@ func (s *Store) CreateReport(ctx context.Context, id int) (int64, error) {
 	)
 	defer span.End()
 
-	res, err := s.db.Exec("INSERT INTO reports (url_id) VALUES ($1)", id)
+	res, err := s.db.Exec("INSERT INTO reports (url_id) VALUES ($1)", urlID)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)

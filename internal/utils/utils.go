@@ -2,7 +2,7 @@ package utils
 
 import "github.com/gofiber/fiber/v2"
 
-func GetRequestId(c *fiber.Ctx) string {
-	requestId := c.Locals("requestid").(string)
-	return requestId
+func GetRequestID(c *fiber.Ctx) string {
+	requestID := c.Locals("requestid").(string)
+	return requestID
 }

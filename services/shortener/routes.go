@@ -59,7 +59,7 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Redirect(data.OriginalUrl)
+	return c.Redirect(data.OriginalURL)
 }
 
 type Payload struct {

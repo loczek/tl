@@ -19,19 +19,19 @@ func NewStore(db *sql.DB) *Store {
 }
 
 type UrlStore interface {
-	GetUrl(context.Context, string) (*Url, error)
-	AddUrl(context.Context, string, string) (int64, error)
+	GetUrl(ctx context.Context, shortCode string) (*URL, error)
+	AddUrl(ctx context.Context, shortCode string, originalURL string) (int64, error)
 }
 
-type Url struct {
-	Id          int       `json:"id"`
+type URL struct {
+	ID          int       `json:"id"`
 	ShortCode   string    `json:"short_code"`
-	OriginalUrl string    `json:"original_url"`
+	OriginalURL string    `json:"original_url"`
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-func (s *Store) GetUrl(ctx context.Context, short_code string) (*Url, error) {
+func (s *Store) GetUrl(ctx context.Context, shortCode string) (*URL, error) {
 	ctx, span := tracer.Start(
 		ctx,
 		"SELECT url",
@@ -42,10 +42,10 @@ func (s *Store) GetUrl(ctx context.Context, short_code string) (*Url, error) {
 	)
 	defer span.End()
 
-	response := Url{}
+	response := URL{}
 
-	err := s.db.QueryRow("SELECT id, short_code, original_url, updated_at, created_at FROM urls WHERE short_code = $1", short_code).
-		Scan(&response.Id, &response.ShortCode, &response.OriginalUrl, &response.UpdatedAt, &response.CreatedAt)
+	err := s.db.QueryRow("SELECT id, short_code, original_url, updated_at, created_at FROM urls WHERE short_code = $1", shortCode).
+		Scan(&response.ID, &response.ShortCode, &response.OriginalURL, &response.UpdatedAt, &response.CreatedAt)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
@@ -57,7 +57,7 @@ func (s *Store) GetUrl(ctx context.Context, short_code string) (*Url, error) {
 	return &response, nil
 }
 
-func (s *Store) AddUrl(ctx context.Context, short_code string, original_url string) (int64, error) {
+func (s *Store) AddUrl(ctx context.Context, shortCode string, originalURL string) (int64, error) {
 	ctx, span := tracer.Start(
 		ctx,
 		"INSERT url",
@@ -68,7 +68,7 @@ func (s *Store) AddUrl(ctx context.Context, short_code string, original_url stri
 	)
 	defer span.End()
 
-	res, err := s.db.Exec("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING", short_code, original_url)
+	res, err := s.db.Exec("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING", shortCode, originalURL)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		return 0, err
