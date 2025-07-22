@@ -53,6 +53,7 @@ func AttachTraceContext() func(c *fiber.Ctx) error {
 
 		if err != nil {
 			span.SetStatus(codes.Error, err.Error())
+			span.RecordError(err)
 		} else {
 			span.SetStatus(codes.Ok, "responded")
 		}

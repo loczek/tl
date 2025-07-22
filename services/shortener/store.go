@@ -71,12 +71,14 @@ func (s *Store) AddUrl(ctx context.Context, shortCode string, originalURL string
 	res, err := s.db.Exec("INSERT INTO urls (short_code, original_url) VALUES ($1, $2) ON CONFLICT (short_code) DO NOTHING", shortCode, originalURL)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
 		return 0, err
 	}
 
 	count, err := res.RowsAffected()
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
 		return 0, err
 	}
 
