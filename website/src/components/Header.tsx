@@ -7,7 +7,7 @@ function Header() {
       <img src={logo} alt="logo" className="size-10" />
       <a
         href="https://github.com/42fm/42fm"
-        className="p-2 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors "
+        className="p-2 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors"
       >
         <img src={github} alt="github repo" className="size-6" />
       </a>
