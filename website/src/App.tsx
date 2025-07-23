@@ -49,46 +49,49 @@ function App() {
         {/* <div className="absolute inset-0 outer rounded-2xl mix-blend-plus-lighter"> */}
         {/* <div className="absolute inset-0 rounded-2xl border-8 border-[#808080] blur-lg mix-blend-color-dodge"></div> */}
         {/* </div> */}
-        <h1 className="text-6xl tracking-tight font-bold my-8 text-white z-10 anim-from-bottom">
-          Simple Link Shortener
-        </h1>
-        <form
-          onSubmit={handleAction}
-          // className="space-x-4 *:focus-visible:outline-2 *:outline-offset-2 *:focus-visible:outline-zinc-600 font-semibold"
-          className="gap-4 *:focus-visible:outline-2 *:outline-offset-2 *:focus-visible:outline-[#303030] font-semibold z-10 flex"
-        >
-          {shortCode ? (
-            <div
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  "http://localhost:3000/" + shortCode,
-                );
-              }}
-              className="px-6 py-4 bg-[#1C1C1C] rounded-md w-96 inline-block"
-            >
-              http://localhost:3000/{shortCode}
-            </div>
-          ) : (
-            <input
-              className="px-6 py-4 bg-[#1C1C1C] rounded-md w-96 anim-from-bottom"
-              onChange={(e) => setUrl(e.target.value)}
-              value={url}
-              placeholder="Enter url here"
-              maxLength={2048}
-              name="url"
-              type="url"
-              autoFocus
-              autoComplete="off"
-            />
-          )}
-          <button
-            type="submit"
-            className="bg-[#242424] px-6 py-4 rounded-md anim-from-bottom"
+        <div className="anim-from-bottom flex flex-col items-center">
+          <h1 className="text-6xl tracking-tight font-bold mb-8 text-white z-10">
+            Simple Link Shortener
+          </h1>
+          <form
+            onSubmit={handleAction}
+            // className="space-x-4 *:focus-visible:outline-2 *:outline-offset-2 *:focus-visible:outline-zinc-600 font-semibold"
+            className="gap-4 *:focus-visible:outline-2 *:outline-offset-2 *:focus-visible:outline-[#303030] font-semibold z-10 flex"
           >
-            {isLoading ? <Loader /> : "Shorten"}
-          </button>
-        </form>
+            {shortCode ? (
+              <div
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    "http://localhost:3000/" + shortCode,
+                  );
+                }}
+                className="px-6 py-4 bg-[#1C1C1C] rounded-xl w-96 inline-block"
+              >
+                http://localhost:3000/{shortCode}
+              </div>
+            ) : (
+              <input
+                className="px-6 py-4 bg-[#1C1C1C] rounded-xl w-96"
+                onChange={(e) => setUrl(e.target.value)}
+                value={url}
+                placeholder="Enter url here"
+                maxLength={2048}
+                name="url"
+                type="url"
+                autoFocus
+                autoComplete="off"
+              />
+            )}
+            <button
+              type="submit"
+              className="bg-dark-700 px-6 py-4 rounded-xl hover:bg-dark-600 transition-all"
+            >
+              {isLoading ? <Loader /> : "Shorten"}
+            </button>
+          </form>
+        </div>
       </div>
+
       <Footer />
     </div>
   );
