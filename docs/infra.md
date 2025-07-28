@@ -1,10 +1,9 @@
-# Options
+# Infrastructure as Code (IaC)
 
-- IaC
-  - Terraform
-  - OpenTofu (Terraform fork)
-  - AWS CloudFormation
-  - Ansible
+- Terraform
+- OpenTofu (Terraform fork)
+- AWS CloudFormation
+- Ansible
 
 # Deployment Options
 
@@ -15,32 +14,36 @@
 
 # Definitions
 
-- On-premises vs Cloud
+- On-premises
   - On-premises owns everything like
-    - hardware
     - software
+    - hardware
     - maintanance
+- Cloud
+
 
 # Providers
 
-| Platform     | Free Tier        | Cold Starts |
-| ------------ | ---------------- | ----------- |
-| Fly.io       | Generous         | No          |
-| Render       | Yes Limited      | Yes         |
-| Railway      | Yes ($5 credits) | Yes         |
-| Hetzner VPS  | (~€4/month)      | No          |
-| Oracle Cloud | Yes (ARM only)   | No          |
+| Platform      | Free Tier        | Cold Starts |
+| ------------- | ---------------- | ----------- |
+| Digital Ocean | No               | No          |
+| Fly.io        | Generous         | No          |
+| Render        | Yes Limited      | Yes         |
+| Railway       | Yes ($5 credits) | Yes         |
+| Hetzner VPS   | (~€4/month)      | No          |
+| Oracle Cloud  | Yes (ARM only)   | No          |
 
 # Providers
 
 - AWS
   - Render
   - Vercel
+- Digital Ocean
 - Fly.io
 - GCP
-- Railway (was on GCP, but now they have their own datacenters)
 - Hetzner
 - Oracle Cloud
+- Railway (was on GCP, but now they have their own datacenters)
 
 ## AWS Services
 
@@ -50,3 +53,8 @@
 - Route 53
 - CloudFront
 - CloudWatch
+
+## Uptime
+
+- Uptime Robot
+- Uptime kuma
