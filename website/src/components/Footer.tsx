@@ -4,7 +4,7 @@ function Footer() {
       <span className="py-2 block text-center">
         Made by <span className="opacity-60">loczek</span>
       </span>
-      {import.meta.env.PROD ? "prod" : "dev"}
+      {import.meta.env.PROD ? "built and served (prod)" : "not built (dev)"}
     </footer>
   );
 }
