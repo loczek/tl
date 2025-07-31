@@ -2,10 +2,11 @@
 
 ## Metrics, Traces and Logs
 
-- Metrics are collected with otlp and exported with the [otlp prometheus exporter](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/prometheus) and served with the [prometheus client library](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/prometheus) for prometheus to be pulled
-- Logs are collected with otlp and exported with [otlp http exporter](go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp) and pushed to loki
-- Traces are collected with otlp and exported with [otlp http exporter](http://go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp) and pushed to tempo
+- Metrics are collected with otlp and exported with [otlp metrics http exporter](go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp) and are pushed to prometheus
+- Logs are collected with otlp and exported with [otlp logs http exporter](go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp) and are pushed to loki
+- Traces are collected with otlp and exported with [otlp traces http exporter](go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp) and are pushed to tempo
 - Correlation between logs -> traces, traces -> logs exist
+<!-- - Metrics are collected with otlp and exported with the [otlp prometheus exporter](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/prometheus) and served with the [prometheus client library](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/prometheus) for prometheus to be pulled -->
 
 ## Transport Method
 
@@ -16,8 +17,9 @@
 ## Push vs Pull
 
 - push doesn't require service discovery
+- push is the otlp standard
 - pull has health checks automatically
-- pull is the standard
+- pull is the industry standard?
 
 
 ## Links

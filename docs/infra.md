@@ -48,7 +48,8 @@
 ## AWS Services
 
 - EC2
-- ECS
+- ECS (seems expensive)
+- AWS RDS (managed postgresql)
 - Aurora DSQL
 - Route 53
 - CloudFront
