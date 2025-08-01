@@ -24,7 +24,7 @@ func main() {
 		panic(err)
 	}
 
-	meterProvider, err := telemetry.NewMeterProviderPrometheus(res)
+	meterProvider, err := telemetry.NewMeterProviderHttp(res)
 	if err != nil {
 		panic(err)
 	}

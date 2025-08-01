@@ -48,7 +48,8 @@
 ## AWS Services
 
 - EC2
-- ECS (seems expensive)
+- Elastic Kubernetes Service (seems expensive)
+- Elastic Container Service (containers on EC2 or Fargate)
 - AWS RDS (managed postgresql)
 - Aurora DSQL
 - Route 53

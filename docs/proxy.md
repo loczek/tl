@@ -9,3 +9,10 @@ The current uess `traefik` as a reverse proxy and load balancer. It's not the be
 ## Alternatives
 
 The prefered choice for would be to use `nginx` or `haproxy` but the setup seems more complicated
+
+
+## Options
+
+- Nginx
+- Caddy
+- Traefik
