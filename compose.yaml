@@ -1,9 +1,31 @@
 services:
+  traefik:
+    image: traefik:v3.5
+    container_name: traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      #- "--log.level=DEBUG"
+      # web ui (remove for prod)
+      - "--api.insecure=true"
+    ports:
+      - 80:80
+      - 443:443
+      # web ui (remove for prod)
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
   website:
     build:
       context: website
-    ports:
-      - 5173:5173
+    expose:
+      - 5173
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.website.rule=Host(`short.com`)"
+      - "traefik.http.routers.website.entrypoints=web"
+      - "traefik.http.services.website.loadbalancer.server.port=5173"
     develop:
       watch:
         - path: ./website
@@ -15,9 +37,13 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-      # target: final
-    ports:
-      - 3000:3000
+    expose:
+      - 3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`sho.rt`)"
+      - "traefik.http.routers.server.entrypoints=web"
+      - "traefik.http.services.server.loadbalancer.server.port=3000"
     environment:
       - ENV=development
       - OTEL_LOGS_EXPORTER=none
@@ -30,9 +56,6 @@ services:
         condition: service_started
       rdb:
         condition: service_started
-    links:
-      - db
-      - rdb
     volumes:
       - ./:/app
   db:
@@ -42,8 +65,8 @@ services:
       - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=example
-    ports:
-      - 5432:5432
+    expose:
+      - 5432
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 10s
@@ -53,36 +76,24 @@ services:
     image: redis
     volumes:
       - redis-data:/data
-    ports:
-      - 6379:6379
-  # otel-collector:
-  #   image: otel/opentelemetry-collector-contrib
-  #   volumes:
-  #     - ./collector/config.yaml:/etc/otelcol-contrib/config.yaml
-  #   ports:
-  #     - 1888:1888 # pprof extension
-  #     - 8888:8888 # Prometheus metrics exposed by the Collector
-  #     - 8889:8889 # Prometheus exporter metrics
-  #     - 13133:13133 # health_check extension
-  #     - 4317:4317 # OTLP gRPC receiver
-  #     - 4318:4318 # OTLP http receiver
-  #     - 55679:55679 # zpages extension
+    expose:
+      - 6379
   tempo:
     image: grafana/tempo
     command: ["-config.file=/etc/tempo.yaml"]
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
       - tempo-data:/var/tempo
-    ports:
-      - 3200:3200 # tempo
-      - 9095:9095 # tempo grpc
-      - 4317:4317 # otlp grpc
-      - 4318:4318 # otlp http
+    expose:
+      - 3200 # tempo
+      - 9095 # tempo grpc
+      - 4317 # otlp grpc
+      - 4318 # otlp http
     attach: false
   loki:
     image: grafana/loki
-    ports:
-      - 3100:3100
+    expose:
+      - 3100
     volumes:
       - loki-data:/loki
       - ./loki/loki.yaml:/etc/loki/loki.yaml
@@ -101,11 +112,16 @@ services:
     attach: false
   grafana:
     image: grafana/grafana
-    ports:
-      - 9000:3000
+    expose:
+      - 3000
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana:/etc/grafana/provisioning/datasources/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.short.com`)"
+      - "traefik.http.routers.grafana.entrypoints=web"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
     attach: false
 
 volumes:
