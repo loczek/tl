@@ -23,7 +23,7 @@ import (
 )
 
 func NewResource() (*sdkresource.Resource, error) {
-	instanceID := uuid.New().String()
+	instanceID := uuid.Must(uuid.NewV7()).String()
 
 	return sdkresource.Merge(sdkresource.Default(),
 		sdkresource.NewWithAttributes(
