@@ -23,14 +23,15 @@ import (
 )
 
 func NewResource() (*sdkresource.Resource, error) {
-	instanceID := uuid.New()
+	instanceID := uuid.New().String()
 
 	return sdkresource.Merge(sdkresource.Default(),
 		sdkresource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceName("go-link-shortener"),
 			semconv.ServiceVersion("0.1.0"),
-			semconv.ServiceInstanceID(instanceID.String()),
+			semconv.ServiceInstanceID(instanceID),
+			semconv.DeploymentName(config.APP_ENV),
 		))
 }
 
