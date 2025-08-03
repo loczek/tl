@@ -12,6 +12,7 @@ var (
 	CollisionsCounter    metric.Int64Counter
 	HttpRequestsCounter  metric.Int64Counter
 	ReportCounter        metric.Int64Counter
+	HttpRequestDuration  metric.Float64Histogram
 )
 
 func init() {
@@ -35,10 +36,25 @@ func init() {
 		metric.WithDescription("Number of reports made"),
 		metric.WithUnit("{count}"),
 	)
+	HttpRequestDuration = createFloatHistogram(
+		"http.request.duration",
+		metric.WithDescription("Duration of a request"),
+		metric.WithUnit("ms"),
+	)
 }
 
 func createIntCounter(name string, options ...metric.Int64CounterOption) metric.Int64Counter {
 	counter, err := meter.Int64Counter(
+		name, options...,
+	)
+	if err != nil {
+		panic(err)
+	}
+	return counter
+}
+
+func createFloatHistogram(name string, options ...metric.Float64HistogramOption) metric.Float64Histogram {
+	counter, err := meter.Float64Histogram(
 		name, options...,
 	)
 	if err != nil {

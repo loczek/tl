@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/loczek/go-link-shortener/internal/telemetry/metrics"
 	"go.opentelemetry.io/otel/attribute"
@@ -9,8 +11,11 @@ import (
 
 func MetricsByName() func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
+		start := time.Now()
+
 		err := c.Next()
 
+		metrics.HttpRequestDuration.Record(c.Context(), float64(time.Since(start).Microseconds())/1000)
 		metrics.HttpRequestsCounter.Add(
 			c.Context(),
 			1,
