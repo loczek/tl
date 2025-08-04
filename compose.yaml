@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:v3.5
+    image: traefik:3.5
     container_name: traefik
     command:
       - "--providers.docker=true"
@@ -59,7 +59,7 @@ services:
     volumes:
       - ./:/app
   db:
-    image: postgres
+    image: postgres:17.5-alpine
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
@@ -73,13 +73,13 @@ services:
       timeout: 5s
       retries: 5
   rdb:
-    image: redis
+    image: redis:8.0-alpine
     volumes:
       - redis-data:/data
     expose:
       - 6379
   tempo:
-    image: grafana/tempo
+    image: grafana/tempo:2.8
     command: ["-config.file=/etc/tempo.yaml"]
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
@@ -91,7 +91,7 @@ services:
       - 4318 # otlp http
     attach: false
   loki:
-    image: grafana/loki
+    image: grafana/loki:3.5
     expose:
       - 3100
     volumes:
@@ -99,7 +99,7 @@ services:
       - ./loki/loki.yaml:/etc/loki/loki.yaml
     attach: false
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v3.5.0
     command:
       - "--web.enable-otlp-receiver"
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -111,7 +111,7 @@ services:
       - ./prometheus:/etc/prometheus/
     attach: false
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:12.1.0
     expose:
       - 3000
     volumes:
