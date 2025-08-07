@@ -84,7 +84,7 @@ function App() {
             )}
             <button
               type="submit"
-              className="bg-dark-700 px-6 py-4 rounded-xl hover:bg-dark-600 transition-all"
+              className="bg-dark-700 px-6 py-4 rounded-xl hover:bg-dark-600 transition-all active:scale-95"
             >
               {isLoading ? <Loader /> : "Shorten"}
             </button>
