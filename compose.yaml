@@ -52,17 +52,17 @@ services:
       - REDIS_URL=redis://rdb:6379/0
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://prometheus:9090/api/v1/otlp/v1/metrics
     depends_on:
-      db:
+      postgres:
         condition: service_started
-      rdb:
+      redis:
         condition: service_started
     volumes:
       - ./:/app
-  db:
+  postgres:
     image: postgres:17.5-alpine
     user: postgres
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=example
     expose:
@@ -72,7 +72,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  rdb:
+  redis:
     image: redis:8.0-alpine
     volumes:
       - redis-data:/data
@@ -125,7 +125,7 @@ services:
     attach: false
 
 volumes:
-  db-data:
+  postgres-data:
   redis-data:
   prometheus-data:
   grafana-data:
