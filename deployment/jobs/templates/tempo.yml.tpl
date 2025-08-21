@@ -1,0 +1,82 @@
+# Taken from: https://github.com/grafana/tempo/blob/main/example/docker-compose/local/tempo.yaml
+
+stream_over_http_enabled: true
+
+server:
+  http_listen_port: {{ env "NOMAD_PORT_http" }}
+  grpc_listen_port: {{ env "NOMAD_PORT_grpc" }}
+  log_level: info
+
+cache:
+  background:
+    writeback_goroutines: 5
+
+query_frontend:
+  search:
+    duration_slo: 5s
+    throughput_bytes_slo: 1.073741824e+09
+    metadata_slo:
+      duration_slo: 5s
+      throughput_bytes_slo: 1.073741824e+09
+  trace_by_id:
+    duration_slo: 100ms
+  metrics:
+    max_duration: 200h # maximum duration of a metrics query, increase for local setups
+    query_backend_after: 5m
+    duration_slo: 5s
+    throughput_bytes_slo: 1.073741824e+09
+
+distributor:
+  usage:
+    cost_attribution:
+      enabled: true
+  receivers: # this configuration will listen on all ports and protocols that tempo is capable of.
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:{{ env "NOMAD_PORT_otlp_grpc" }}
+        http:
+          endpoint: 0.0.0.0:{{ env "NOMAD_PORT_otlp_http" }}
+
+ingester:
+  max_block_duration: 5m # cut the headblock when this much time passes. this is being set for demo purposes and should probably be left alone normally
+
+compactor:
+  compaction:
+    block_retention: 720h # overall Tempo trace retention. set for demo purposes
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: {{ env "NOMAD_ALLOC_DIR" }}/tempo/generator/wal
+    {{ range nomadService "prometheus" }}
+    remote_write:
+      - url: http://{{ .Address }}:{{ .Port }}/api/v1/write
+        send_exemplars: true
+    {{ end }}
+  traces_storage:
+    path: {{ env "NOMAD_ALLOC_DIR" }}/tempo/generator/traces
+  processor:
+    local_blocks:
+      filter_server_spans: false
+      flush_to_storage: true
+
+storage:
+  trace:
+    backend: local # backend configuration to use
+    wal:
+      path: {{ env "NOMAD_ALLOC_DIR" }}/tempo/wal
+    local:
+      path: {{ env "NOMAD_ALLOC_DIR" }}/tempo/blocks
+
+overrides:
+  defaults:
+    cost_attribution:
+      dimensions:
+        service.name: ""
+    metrics_generator:
+      processors: [service-graphs, span-metrics, local-blocks] # enables metrics generator
+      generate_native_histograms: both

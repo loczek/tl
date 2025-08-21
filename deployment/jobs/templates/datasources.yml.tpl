@@ -1,0 +1,43 @@
+apiVersion: 1
+
+datasources:
+  - name: Main
+    type: prometheus
+    uid: prom
+    access: proxy
+    url: {{ range nomadService "prometheus" }}http://{{ .Address }}:{{ .Port }}{{ end }}
+    isDefault: true
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: {{ range nomadService "loki" }}http://{{ .Address }}:{{ .Port }}{{ end }}
+    jsonData:
+      derivedFields:
+        - name: trace_id
+          datasourceUid: tempo
+          urlDisplayLabel: "View Trace"
+          # https://github.com/grafana/loki/issues/9209#issuecomment-1882710470
+          matcherType: label
+          matcherRegex: trace_id
+          url: "$${__value.raw}"
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: {{ range nomadService "tempo" }}http://{{ .Address }}:{{ .Port }}{{ end }}
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+        filterByTraceID: true
+        filterBySpanID: true
+        tags:
+          [
+            { key: "service.name", value: "service_name" },
+            { key: "service.namespace", value: "service_namespace" },
+            { key: "service.instance.id", value: "service_instance_id" },
+          ]
+        customQuery: true
+        query: '{$${__tags}} | trace_id="$${__span.traceId}"'

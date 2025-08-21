@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://www.schemastore.org/prometheus.json
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["{{ env "NOMAD_ADDR_http"}}"]
+
+storage:
+  tsdb:
+    out_of_order_time_window: 30m
+
+otlp:
+  translation_strategy: UnderscoreEscapingWithSuffixes
+  promote_resource_attributes:
+    - service.instance.id
+    - service.name
+    - service.namespace
+    - service.version
+    - cloud.availability_zone
+    - cloud.region
+    - container.name
+    - deployment.environment
+    - deployment.environment.name
+    - k8s.cluster.name
+    - k8s.container.name
+    - k8s.cronjob.name
+    - k8s.daemonset.name
+    - k8s.deployment.name
+    - k8s.job.name
+    - k8s.namespace.name
+    - k8s.pod.name
+    - k8s.replicaset.name
+    - k8s.statefulset.name
