@@ -1,3 +1,5 @@
+# Taken from: https://github.com/grafana/tempo/blob/main/example/docker-compose/local/tempo.yaml
+
 stream_over_http_enabled: true
 
 server:
@@ -7,11 +9,6 @@ server:
 cache:
   background:
     writeback_goroutines: 5
-  # caches:
-  #   - roles:
-  #       - frontend-search
-  #     memcached:
-  #       addresses: dns+memcached:11211
 
 query_frontend:
   search:
