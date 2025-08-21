@@ -17,7 +17,6 @@ job "server" {
         "traefik.enable=true",
         "traefik.http.routers.server.rule=Host(`sho.rt`)",
         "traefik.http.routers.server.entrypoints=web",
-        # "traefik.http.services.server.loadbalancer.server.port=3000"
       ]
     }
 
@@ -39,9 +38,6 @@ job "server" {
       }
 
       template {
-        #         data        = <<EOH
-        # REDIS_URL = "redis://{{ range nomadService "redis" }}{{ .Address }}:{{ .Port }}{{ end }}/0"
-        #         EOH
         data        = <<EOH
         {{ with nomadService "redis" }}
           {{ with index . 0}}
