@@ -31,38 +31,36 @@ job "server" {
       env {
         APP_ENV                     = "production"
         LOG_TO_STDOUT               = false
-        DATABASE_URL                = "postgres://postgres:example@postgres:5432/postgres"
         OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
         OTEL_METRIC_EXPORT_INTERVAL = "15000"
         OTEL_SERVICE_NAME           = "go-link-shortener"
       }
 
       template {
-        data        = <<EOH
-        {{ with nomadService "redis" }}
-          {{ with index . 0}}
-            REDIS_URL = "redis://{{ .Address }}:{{ .Port }}/0"
-          {{ end }}
-        {{ end }}
-        {{ with nomadService "prometheus" }}
-          {{ with index . 0}}
-            OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = "http://{{ .Address }}:{{ .Port }}/api/v1/otlp/v1/metrics"
-          {{ end }}
-        {{ end }}
-        {{ with nomadService "loki" }}
-          {{ with index . 0}}
-            OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = "http://{{ .Address }}:{{ .Port }}/otlp/v1/logs"
-          {{ end }}
-        {{ end }}
-        {{ with nomadService "tempo-otlp-http" }}
-          {{ with index . 0}}
-            OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = "http://{{ .Address }}:{{ .Port }}/v1/traces"
-          {{ end }}
-        {{ end }}
-        EOH
+        data        = <<-EOF
+        {{- range nomadService "postgres" -}}
+        DATABASE_URL = "postgres://postgres:{{ with nomadVar "nomad/jobs/server" }}{{ .db_password }}{{ end }}@{{ .Address }}:{{ .Port }}/postgres"
+        {{ end -}}
+
+        {{- range nomadService "redis" -}}
+        REDIS_URL = "redis://{{ .Address }}:{{ .Port }}/0"
+        {{ end -}}
+
+        {{- range nomadService "prometheus" -}}
+        OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = "http://{{ .Address }}:{{ .Port }}/api/v1/otlp/v1/metrics"
+        {{ end -}}
+
+        {{- range nomadService "loki" -}}
+        OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = "http://{{ .Address }}:{{ .Port }}/otlp/v1/logs"
+        {{ end -}}
+
+        {{- range nomadService "tempo-otlp-http" -}}
+        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = "http://{{ .Address }}:{{ .Port }}/v1/traces"
+        {{ end -}}
+        EOF
         env         = true
         change_mode = "restart"
-        destination = "local/database.env"
+        destination = "local/other.env"
       }
 
       resources {
