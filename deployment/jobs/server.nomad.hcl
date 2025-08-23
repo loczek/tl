@@ -41,6 +41,17 @@ job "server" {
         {{- range nomadService "postgres" -}}
         DATABASE_URL = "postgres://postgres:{{ with nomadVar "nomad/jobs/server" }}{{ .db_password }}{{ end }}@{{ .Address }}:{{ .Port }}/postgres"
         {{ end -}}
+        EOF
+        env         = true
+        change_mode = "restart"
+        destination = "${NOMAD_SECRETS_DIR}/db.env"
+      }
+
+      template {
+        data        = <<-EOF
+        {{- range nomadService "postgres" -}}
+        DATABASE_URL = "postgres://postgres:{{ with nomadVar "nomad/jobs/server" }}{{ .db_password }}{{ end }}@{{ .Address }}:{{ .Port }}/postgres"
+        {{ end -}}
 
         {{- range nomadService "redis" -}}
         REDIS_URL = "redis://{{ .Address }}:{{ .Port }}/0"
