@@ -16,7 +16,6 @@ job "grafana" {
         "traefik.enable=true",
         "traefik.http.routers.grafana.rule=Host(`grafana.short.com`)",
         "traefik.http.routers.grafana.entrypoints=web",
-        "traefik.http.services.grafana.loadbalancer.server.port=9000",
       ]
     }
 
