@@ -60,7 +60,6 @@ job "tempo" {
       }
 
       template {
-        change_mode = "restart"
         data        = file("./deployment/jobs/templates/tempo.yml.tpl")
         destination = "local/config/tempo.yml"
       }

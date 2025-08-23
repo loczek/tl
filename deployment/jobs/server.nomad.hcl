@@ -43,7 +43,6 @@ job "server" {
         {{ end -}}
         EOF
         env         = true
-        change_mode = "restart"
         destination = "${NOMAD_SECRETS_DIR}/db.env"
       }
 
@@ -70,7 +69,6 @@ job "server" {
         {{ end -}}
         EOF
         env         = true
-        change_mode = "restart"
         destination = "local/other.env"
       }
 

@@ -48,7 +48,6 @@ job "grafana" {
         {{ end }}
         EOF
         env         = true
-        change_mode = "restart"
         destination = "${NOMAD_SECRETS_DIR}/pass.env"
       }
 
@@ -60,7 +59,6 @@ EOF
       }
 
       template {
-        change_mode = "restart"
         data        = file("./deployment/jobs/templates/datasources.yml.tpl")
         destination = "/local/grafana/provisioning/datasources/datasources.yaml"
       }

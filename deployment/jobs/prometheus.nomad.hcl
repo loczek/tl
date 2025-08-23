@@ -42,7 +42,6 @@ job "prometheus" {
       }
 
       template {
-        change_mode = "restart"
         data        = file("./deployment/jobs/templates/prometheus.yml.tpl")
         destination = "local/config/prometheus.yml"
       }
