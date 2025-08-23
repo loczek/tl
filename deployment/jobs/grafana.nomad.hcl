@@ -42,6 +42,18 @@ job "grafana" {
       }
 
       template {
+        data        = <<-EOF
+        {{ with nomadVar "nomad/jobs/grafana" }}
+        GF_SECURITY_ADMIN_USER = "{{ .username }}"
+        GF_SECURITY_ADMIN_PASSWORD = "{{ .password }}"
+        {{ end }}
+        EOF
+        env         = true
+        change_mode = "restart"
+        destination = "${NOMAD_SECRETS_DIR}/pass.env"
+      }
+
+      template {
         data        = <<EOF
 
 EOF
