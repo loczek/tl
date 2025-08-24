@@ -6,20 +6,15 @@ TiiinyLink is a link shortener service that is designed to be highly available a
 
 ## Development Setup
 
-1. Clone repo
+Follow these steps to set up your development environment:
 
-   ```sh
-   git clone https://github.com/loczek/tl
-   ```
+```sh
+# Clone repo
+$ git clone https://github.com/loczek/tl
 
-1. Navigate to the project directory
+# Navigate to the project directory
+$ cd tl
 
-   ```sh
-   cd tl
-   ```
-
-1. Build and start the containers
-
-   ```sh
-   docker compose up  --build --watch
-   ```
+# Build and start the containers
+$ docker compose up --build --watch
+```
