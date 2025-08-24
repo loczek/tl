@@ -4,25 +4,53 @@
 receivers:
   otlp:
     protocols:
-      # grpc:
-      #   endpoint: 0.0.0.0:4317
-      #   tls:
-      #     cert_file: cert.pem
-      #     key_file: cert-key.pem
+      grpc:
+        endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "otel-collector"
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+  hostmetrics:
+    scrapers:
+      cpu:
+      disk:
+      filesystem:
+      load:
+      memory:
+      network:
+      process:
+        mute_process_user_error: true
+      processes:
+      paging:
 
 processors:
   batch:
 
 exporters:
   debug:
+    verbosity: detailed
+  otlphttp/metrics:
+    endpoint: prometheus:9090
+    metrics_endpoint: http://prometheus:9090/api/v1/otlp/v1/metrics
+    tls:
+      insecure: true
+  otlphttp/logs:
+    endpoint: http://loki:3100/otlp
+    logs_endpoint: http://loki:3100/otlp/v1/logs
+    tls:
+      insecure: true
+  otlphttp/traces:
+    endpoint: http://tempo/v1/traces
+    traces_endpoint: http://tempo:4318/v1/traces
+    tls:
+      insecure: true
   prometheus:
-    endpoint: 0.0.0.0:8889
-    namespace: default
-    # endpoint: prometheus:9090
-    # endpoint: otelcol:4317
-    # namespace: default
+    endpoint: "0.0.0.0:8889"
 
 extensions:
   health_check:
@@ -33,10 +61,14 @@ service:
   extensions: [health_check, pprof, zpages]
   pipelines:
     metrics:
+      receivers: [otlp, prometheus, hostmetrics]
+      processors: [batch]
+      exporters: [prometheus]
+    logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus, debug]
-    # logs:
-    #   receivers: [otlp]
-    #   processors: [batch]
-    #   exporters: [prometheus]
+      exporters: [otlphttp/logs]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/traces]
