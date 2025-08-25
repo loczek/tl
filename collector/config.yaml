@@ -29,6 +29,10 @@ receivers:
       paging:
 
 processors:
+  memory_limiter:
+    limit_mib: 1365 # 75% of maximum memory up to 1G
+    spike_limit_mib: 256 # 25% of limit up to 1G
+    check_interval: 5s
   batch:
 
 exporters:
@@ -56,13 +60,13 @@ service:
   pipelines:
     metrics:
       receivers: [otlp, prometheus, hostmetrics]
-      processors: [batch]
+      processors: [memory_limiter, batch]
       exporters: [prometheus]
     logs:
       receivers: [otlp]
-      processors: [batch]
+      processors: [memory_limiter, batch]
       exporters: [otlphttp/logs]
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [memory_limiter, batch]
       exporters: [otlphttp/traces]
