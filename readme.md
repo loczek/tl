@@ -4,6 +4,11 @@
 
 TiiinyLink is a link shortener service that is designed to be highly available and scalable.
 
+## Status
+
+> [!Note]  
+> The project is still work in progress.
+
 ## Development Setup
 
 Follow these steps to set up your development environment:
