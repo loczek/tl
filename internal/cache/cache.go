@@ -72,7 +72,7 @@ func (r *RedisStore) SetCacheKey(ctx context.Context, key string, val string, ex
 	)
 	defer span.End()
 
-	err := r.SetEx(context.Background(), key, val, time.Minute).Err()
+	err := r.SetEx(context.Background(), key, val, expiration).Err()
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
