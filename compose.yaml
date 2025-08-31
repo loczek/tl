@@ -26,6 +26,9 @@ services:
       - "traefik.http.routers.website.rule=Host(`short.com`)"
       - "traefik.http.routers.website.entrypoints=web"
       - "traefik.http.services.website.loadbalancer.server.port=5173"
+    environment:
+      - VITE_DOMAIN_LONG=short.com
+      - VITE_DOMAIN_SHORT=sho.rt
     develop:
       watch:
         - path: ./website
