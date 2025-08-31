@@ -1,3 +1,13 @@
+variable "short_domain" {
+  type    = string
+  default = "tiiiny.link"
+}
+
+variable "image" {
+  type    = string
+  default = "ghcr.io/loczek/tl-server"
+}
+
 job "server" {
   group "server" {
     count = 3
@@ -15,7 +25,7 @@ job "server" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.server.rule=Host(`sho.rt`)",
+        "traefik.http.routers.server.rule=Host(`${var.short_domain}`)",
         "traefik.http.routers.server.entrypoints=web",
       ]
     }
@@ -24,7 +34,7 @@ job "server" {
       driver = "docker"
 
       config {
-        image = "tl-server:local"
+        image = var.image
         ports = ["http"]
       }
 

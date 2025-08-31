@@ -1,3 +1,8 @@
+variable "image" {
+  type    = string
+  default = "postgres:17.5-alpine"
+}
+
 job postgres {
   group postgres {
     network {
@@ -23,7 +28,7 @@ job postgres {
       driver = "docker"
 
       config {
-        image = "postgres:17.5-alpine"
+        image = var.image
         ports = ["postgres"]
       }
 

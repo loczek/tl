@@ -1,3 +1,8 @@
+variable "image" {
+  type    = string
+  default = "redis:8.0-alpine"
+}
+
 job "redis" {
   group "redis" {
 
@@ -37,7 +42,7 @@ job "redis" {
       driver = "docker"
 
       config {
-        image = "redis:8.0-alpine"
+        image = var.image
         ports = ["redis"]
       }
 

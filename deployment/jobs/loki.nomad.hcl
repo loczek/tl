@@ -1,3 +1,8 @@
+variable "image" {
+  type    = string
+  default = "grafana/loki:latest"
+}
+
 job "loki" {
   group "loki" {
     network {
@@ -17,7 +22,7 @@ job "loki" {
       driver = "docker"
 
       config {
-        image = "grafana/loki:latest"
+        image = var.image
         ports = ["http"]
         volumes = [
           # "loki-data:/loki",

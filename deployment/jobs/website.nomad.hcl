@@ -1,3 +1,13 @@
+variable "domain" {
+  type    = string
+  default = "tiiinylink.com"
+}
+
+variable "image" {
+  type    = string
+  default = "ghcr.io/loczek/tl-website"
+}
+
 job "website" {
   group "website" {
     network {
@@ -13,7 +23,7 @@ job "website" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.website.rule=Host(`short.com`)",
+        "traefik.http.routers.website.rule=Host(`${var.domain}`)",
         "traefik.http.routers.website.entrypoints=web",
       ]
     }
@@ -22,7 +32,7 @@ job "website" {
       driver = "docker"
 
       config {
-        image = "tl-website:local"
+        image = var.image
         ports = ["http"]
       }
     }

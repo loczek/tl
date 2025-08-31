@@ -1,3 +1,13 @@
+variable "domain" {
+  type    = string
+  default = "grafana.tiiinylink.com"
+}
+
+variable "image" {
+  type    = string
+  default = "grafana/grafana:latest"
+}
+
 job "grafana" {
   group "grafana" {
     network {
@@ -14,7 +24,7 @@ job "grafana" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.grafana.rule=Host(`grafana.short.com`)",
+        "traefik.http.routers.grafana.rule=Host(`${var.domain}`)",
         "traefik.http.routers.grafana.entrypoints=web",
       ]
     }
@@ -23,7 +33,7 @@ job "grafana" {
       driver = "docker"
 
       config {
-        image = "grafana/grafana:latest"
+        image = var.image
         ports = ["http"]
       }
 

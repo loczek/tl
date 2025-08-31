@@ -1,3 +1,8 @@
+variable "image" {
+  type    = string
+  default = "prom/prometheus:v3.5.0"
+}
+
 job "prometheus" {
   group "prometheus" {
 
@@ -26,7 +31,7 @@ job "prometheus" {
       driver = "docker"
 
       config {
-        image = "prom/prometheus:v3.5.0"
+        image = var.image
         ports = ["http"]
         args = [
           "--web.enable-otlp-receiver",

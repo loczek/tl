@@ -1,3 +1,8 @@
+variable "image" {
+  type    = string
+  default = "grafana/tempo:2.8.1"
+}
+
 job "tempo" {
   group "tempo" {
     network {
@@ -44,7 +49,7 @@ job "tempo" {
       driver = "docker"
 
       config {
-        image = "grafana/tempo:2.8.1"
+        image = var.image
         ports = ["http", "grpc", "otlp_http", "otlp_grpc"]
         args = [
           "--config.file=/etc/tempo/config/tempo.yml",

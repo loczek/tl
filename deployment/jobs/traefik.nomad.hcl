@@ -1,3 +1,8 @@
+variable "image" {
+  type    = string
+  default = "traefik:3.5.0"
+}
+
 job "traefik" {
   type = "system"
 
@@ -23,7 +28,7 @@ job "traefik" {
       driver = "docker"
 
       config {
-        image        = "traefik:3.5.0"
+        image        = var.image
         network_mode = "host"
         ports = [
           "api",
