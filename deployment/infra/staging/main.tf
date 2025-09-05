@@ -2,20 +2,6 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-variable "my_ip" {
-  type      = string
-  sensitive = true
-}
-
-variable "github_token" {
-  type      = string
-  sensitive = true
-}
-
-variable "ssh_public_key" {
-  type = string
-}
-
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
