@@ -214,10 +214,14 @@ resource "aws_instance" "tl_instance" {
   subnet_id                   = aws_subnet.public-2.id
   vpc_security_group_ids      = [aws_security_group.sg.id]
   key_name                    = aws_key_pair.deployer.key_name
-  user_data = templatefile("${path.module}/main.sh", {
-    github_token = var.github_token
-  })
   user_data_replace_on_change = true
+  user_data = templatefile("${path.module}/../scripts/main.sh.tpl", {
+    GITHUB_TOKEN          = var.github_token
+    GITHUB_USERNAME       = var.github_username
+    INSTALL_DOCKER_SCRIPT = file("${path.module}/../scripts/install-docker.sh")
+    INSTALL_NOMAD_SCRIPT  = file("${path.module}/../scripts/install-nomad.sh")
+    SETUP_NOMAD_SCRIPT    = file("${path.module}/../scripts/setup-nomad.sh")
+  })
 }
 
 output "ip" {
