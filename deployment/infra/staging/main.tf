@@ -220,7 +220,7 @@ resource "aws_instance" "tl_instance" {
     GITHUB_USERNAME       = var.github_username
     INSTALL_DOCKER_SCRIPT = file("${path.module}/../scripts/install-docker.sh")
     INSTALL_NOMAD_SCRIPT  = file("${path.module}/../scripts/install-nomad.sh")
-    SETUP_NOMAD_SCRIPT    = file("${path.module}/../scripts/setup-nomad.sh")
+    SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/nomad.hcl")
   })
 }
 
