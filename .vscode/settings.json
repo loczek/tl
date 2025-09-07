@@ -1,5 +1,5 @@
 {
   "files.associations": {
-    "**/deployment/jobs/templates/*.tpl": "yaml"
+    "**/deployment/jobs/templates/*.tmpl": "yaml"
   }
 }

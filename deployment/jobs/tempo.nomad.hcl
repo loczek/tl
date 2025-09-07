@@ -65,7 +65,7 @@ job "tempo" {
       }
 
       template {
-        data        = file("./deployment/jobs/templates/tempo.yml.tpl")
+        data        = file("./deployment/jobs/templates/tempo.yml.tmpl")
         destination = "local/config/tempo.yml"
       }
 

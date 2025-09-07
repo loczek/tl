@@ -215,7 +215,7 @@ resource "aws_instance" "tl_instance" {
   vpc_security_group_ids      = [aws_security_group.sg.id]
   key_name                    = aws_key_pair.deployer.key_name
   user_data_replace_on_change = true
-  user_data = templatefile("${path.module}/../scripts/main.sh.tpl", {
+  user_data = templatefile("${path.module}/../scripts/main.sh.tmpl", {
     GITHUB_TOKEN          = var.github_token
     GITHUB_USERNAME       = var.github_username
     INSTALL_DOCKER_SCRIPT = file("${path.module}/../scripts/install-docker.sh")

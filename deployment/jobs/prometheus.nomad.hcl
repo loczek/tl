@@ -47,7 +47,7 @@ job "prometheus" {
       }
 
       template {
-        data        = file("./deployment/jobs/templates/prometheus.yml.tpl")
+        data        = file("./deployment/jobs/templates/prometheus.yml.tmpl")
         destination = "local/config/prometheus.yml"
       }
 

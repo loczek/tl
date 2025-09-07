@@ -41,7 +41,7 @@ job "traefik" {
       }
 
       template {
-        data        = file("./deployment/jobs/templates/traefik.yml.tpl")
+        data        = file("./deployment/jobs/templates/traefik.yml.tmpl")
         destination = "local/traefik.yaml"
       }
 

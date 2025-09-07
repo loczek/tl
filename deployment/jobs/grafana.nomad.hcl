@@ -69,7 +69,7 @@ EOF
       }
 
       template {
-        data        = file("./deployment/jobs/templates/datasources.yml.tpl")
+        data        = file("./deployment/jobs/templates/datasources.yml.tmpl")
         destination = "/local/grafana/provisioning/datasources/datasources.yaml"
       }
     }
