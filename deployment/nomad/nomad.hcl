@@ -15,3 +15,8 @@ client {
   enabled = true
   servers = ["127.0.0.1"]
 }
+
+telemetry {
+  publish_allocation_metrics = true
+  publish_node_metrics       = true
+}
