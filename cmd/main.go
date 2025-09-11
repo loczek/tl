@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/joho/godotenv"
 	"github.com/loczek/go-link-shortener/cmd/api"
 	"github.com/loczek/go-link-shortener/internal/cache"
 	"github.com/loczek/go-link-shortener/internal/config"
@@ -14,11 +13,6 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln("error while loading env file")
-	}
-
 	res, err := telemetry.NewResource()
 	if err != nil {
 		panic(err)
