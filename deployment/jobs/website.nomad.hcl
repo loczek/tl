@@ -35,6 +35,11 @@ job "website" {
         image = var.image
         ports = ["http"]
       }
+
+      resources {
+        cpu    = 200
+        memory = 128
+      }
     }
   }
 }

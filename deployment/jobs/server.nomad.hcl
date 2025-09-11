@@ -10,7 +10,7 @@ variable "image" {
 
 job "server" {
   group "server" {
-    count = 3
+    count = 2
 
     network {
       port "http" {

@@ -59,16 +59,15 @@ job "tempo" {
         ]
       }
 
-      resources {
-        cpu    = 200
-        memory = 512
-      }
-
       template {
         data        = file("./deployment/jobs/templates/tempo.yml.tmpl")
         destination = "local/config/tempo.yml"
       }
 
+      resources {
+        cpu    = 200
+        memory = 256
+      }
     }
   }
 }

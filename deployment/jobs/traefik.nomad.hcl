@@ -45,11 +45,6 @@ job "traefik" {
         destination = "local/traefik.yaml"
       }
 
-      resources {
-        cpu    = 200
-        memory = 256
-      }
-
       service {
         name     = "traefik-http"
         port     = "http"
@@ -70,6 +65,11 @@ job "traefik" {
           interval = "3s"
           timeout  = "1s"
         }
+      }
+
+      resources {
+        cpu    = 200
+        memory = 128
       }
     }
   }

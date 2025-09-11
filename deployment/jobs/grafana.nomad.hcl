@@ -37,11 +37,6 @@ job "grafana" {
         ports = ["http"]
       }
 
-      resources {
-        cpu    = 200
-        memory = 256
-      }
-
       env {
         # GF_LOG_LEVEL          = "DEBUG"
         # GF_LOG_MODE           = "console"
@@ -71,6 +66,11 @@ EOF
       template {
         data        = file("./deployment/jobs/templates/datasources.yml.tmpl")
         destination = "/local/grafana/provisioning/datasources/datasources.yaml"
+      }
+
+      resources {
+        cpu    = 200
+        memory = 128
       }
     }
   }
