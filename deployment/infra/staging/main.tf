@@ -209,7 +209,7 @@ resource "aws_key_pair" "deployer" {
 resource "aws_instance" "tl_instance" {
   ami                         = data.aws_ami.ubuntu.id
   availability_zone           = "eu-central-1b"
-  instance_type               = "t3.micro"
+  instance_type               = "c6gd.medium"
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.public-2.id
   vpc_security_group_ids      = [aws_security_group.sg.id]
