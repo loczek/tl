@@ -222,4 +222,8 @@ resource "aws_instance" "tl_instance" {
     INSTALL_NOMAD_SCRIPT  = file("${path.module}/../scripts/install-nomad.sh")
     SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/nomad.hcl")
   })
+
+  instance_market_options {
+    market_type = "spot"
+  }
 }
