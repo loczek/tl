@@ -13,13 +13,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	fiberutils "github.com/gofiber/fiber/v2/utils"
-	"github.com/loczek/go-link-shortener/internal/cache"
-	"github.com/loczek/go-link-shortener/internal/middleware"
-	"github.com/loczek/go-link-shortener/services/health"
-	"github.com/loczek/go-link-shortener/services/report"
-	"github.com/loczek/go-link-shortener/services/shortener"
-	"github.com/loczek/go-link-shortener/services/temp"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/loczek/tl/internal/cache"
+	"github.com/loczek/tl/internal/config"
+	"github.com/loczek/tl/internal/middleware"
+	"github.com/loczek/tl/services/health"
+	"github.com/loczek/tl/services/report"
+	"github.com/loczek/tl/services/shortener"
+	"github.com/loczek/tl/services/temp"
 )
 
 type ApiServer struct {
@@ -32,7 +32,7 @@ func NewApiServer(db *sql.DB, cache *cache.RedisStore) *ApiServer {
 }
 
 func (s *ApiServer) Run() *fiber.App {
-	log := slog.Default().With(slog.String("app", "go-link-shortener"))
+	log := slog.Default().With(slog.String("app", "tl-server"))
 
 	app := fiber.New()
 

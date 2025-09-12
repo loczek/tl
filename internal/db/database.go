@@ -6,7 +6,7 @@ import (
 	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/loczek/go-link-shortener/internal/config"
+	"github.com/loczek/tl/internal/config"
 )
 
 func New(ctx context.Context) *sql.DB {

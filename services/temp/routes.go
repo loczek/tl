@@ -6,10 +6,11 @@ import (
 	"math/rand/v2"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/loczek/tl/internal/cache"
 	"go.opentelemetry.io/otel"
 )
 
-var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
+var tracer = otel.Tracer("github.com/loczek/tl")
 
 type Handler struct {
 	logger *slog.Logger

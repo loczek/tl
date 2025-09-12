@@ -5,7 +5,7 @@ import (
 	"go.opentelemetry.io/otel/metric"
 )
 
-var meter = otel.Meter("github.com/loczek/go-link-shortener")
+var meter = otel.Meter("github.com/loczek/tl")
 
 var (
 	CacheRequestsCounter metric.Int64Counter

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/loczek/go-link-shortener/internal/telemetry/metrics"
+	"github.com/loczek/tl/internal/telemetry/metrics"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 )

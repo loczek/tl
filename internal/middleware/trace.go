@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
+var tracer = otel.Tracer("github.com/loczek/tl")
 
 func AttachTraceContext() func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {

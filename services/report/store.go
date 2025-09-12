@@ -11,7 +11,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
+var tracer = otel.Tracer("github.com/loczek/tl")
 
 type Store struct {
 	db *sql.DB

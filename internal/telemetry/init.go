@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/loczek/go-link-shortener/internal/config"
+	"github.com/loczek/tl/internal/config"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
@@ -28,7 +28,7 @@ func NewResource() (*sdkresource.Resource, error) {
 	return sdkresource.Merge(sdkresource.Default(),
 		sdkresource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceName("go-link-shortener"),
+			semconv.ServiceName("tl-server"),
 			semconv.ServiceVersion("0.1.0"),
 			semconv.ServiceInstanceID(instanceID),
 			semconv.DeploymentName(config.APP_ENV),
@@ -102,7 +102,7 @@ func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error
 		global.SetLoggerProvider(loggerProvider)
 
 		logger := otelslog.NewLogger(
-			"go-link-shortener",
+			"tl-server",
 			otelslog.WithLoggerProvider(loggerProvider),
 		)
 

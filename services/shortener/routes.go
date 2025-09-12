@@ -10,16 +10,16 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/loczek/go-link-shortener/internal/base62"
-	"github.com/loczek/go-link-shortener/internal/cache"
-	"github.com/loczek/go-link-shortener/internal/telemetry/metrics"
+	"github.com/loczek/tl/internal/base62"
+	"github.com/loczek/tl/internal/cache"
+	"github.com/loczek/tl/internal/telemetry/metrics"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
+var tracer = otel.Tracer("github.com/loczek/tl")
 
 type Handler struct {
 	urlStore UrlStore

@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/loczek/go-link-shortener/internal/config"
+	"github.com/loczek/tl/internal/config"
 	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -15,7 +15,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tracer = otel.Tracer("github.com/loczek/go-link-shortener")
+var tracer = otel.Tracer("github.com/loczek/tl")
 
 type RedisStore struct {
 	*redis.Client

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/loczek/go-link-shortener/cmd/api"
-	"github.com/loczek/go-link-shortener/internal/cache"
-	"github.com/loczek/go-link-shortener/internal/config"
-	"github.com/loczek/go-link-shortener/internal/db"
-	"github.com/loczek/go-link-shortener/internal/telemetry"
+	"github.com/loczek/tl/cmd/api"
+	"github.com/loczek/tl/internal/cache"
+	"github.com/loczek/tl/internal/config"
+	"github.com/loczek/tl/internal/db"
+	"github.com/loczek/tl/internal/telemetry"
 )
 
 func main() {

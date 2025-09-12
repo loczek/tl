@@ -1,4 +1,4 @@
-module github.com/loczek/go-link-shortener
+module github.com/loczek/tl
 
 go 1.24.1
 
