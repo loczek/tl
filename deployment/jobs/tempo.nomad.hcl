@@ -25,7 +25,6 @@ job "tempo" {
       }
     }
 
-
     service {
       name     = "tempo"
       port     = "http"
