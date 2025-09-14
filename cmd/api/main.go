@@ -79,7 +79,6 @@ func (s *ApiServer) Run() *fiber.App {
 	reportHandler := report.NewHandler(reportStore, shortener.NewStore(s.db), s.cache)
 	app.Post("/api/report", reportHandler.ReportLink).Name("api.report")
 
-	// shortenerStore := shortener.NewStore(s.db)
 	shortenerHandler := shortener.NewHandler(
 		shortener.NewStore(s.db),
 		s.cache,
