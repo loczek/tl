@@ -24,8 +24,10 @@ job "grafana" {
 
       tags = [
         "traefik.enable=true",
+        "traefik.http.routers.grafana.tls=true",
+        "traefik.http.routers.grafana.tls.certresolver=myresolver",
+        "traefik.http.routers.grafana.entrypoints=websecure",
         "traefik.http.routers.grafana.rule=Host(`${var.domain}`)",
-        "traefik.http.routers.grafana.entrypoints=web",
       ]
     }
 
