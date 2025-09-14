@@ -42,9 +42,11 @@ func (s *ApiServer) Run() *fiber.App {
 		AllowOrigins: "http://localhost:5173",
 		AllowHeaders: "Origin,Content-Type,Accept",
 	}))
-	app.Use(limiter.New(limiter.Config{
-		Max: 50,
-	}))
+	if config.IsProd() {
+		app.Use(limiter.New(limiter.Config{
+			Max: 50,
+		}))
+	}
 	app.Use(recover.New())
 	app.Use(requestid.New(requestid.Config{
 		Generator: fiberutils.UUIDv4,
