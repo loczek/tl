@@ -12,19 +12,19 @@ job "traefik" {
 
   group "traefik" {
     network {
-      port "api" {
-        static = 1936
-        to     = 1936
-      }
-
-      port "http" {
+      port "traefik" {
         static = 8080
         to     = 8080
       }
 
+      port "http" {
+        static = 80
+        to     = 80
+      }
+
       port "https" {
-        static = 8443
-        to     = 8443
+        static = 443
+        to     = 443
       }
     }
 
@@ -35,7 +35,7 @@ job "traefik" {
         image        = var.image
         network_mode = "host"
         ports = [
-          "api",
+          "traefik",
           "http",
           "https"
         ]
@@ -65,18 +65,18 @@ job "traefik" {
         provider = "nomad"
         check {
           type     = "tcp"
-          interval = "3s"
+          interval = "5s"
           timeout  = "1s"
         }
       }
 
       service {
         name     = "traefik-api"
-        port     = "api"
+        port     = "traefik"
         provider = "nomad"
         check {
           type     = "tcp"
-          interval = "3s"
+          interval = "5s"
           timeout  = "1s"
         }
       }
