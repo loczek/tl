@@ -19,3 +19,6 @@ api:
 providers:
   nomad:
     exposedByDefault: false
+    endpoint:
+      token: {{ env "NOMAD_TOKEN" }}
+

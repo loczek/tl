@@ -3,6 +3,10 @@ variable "image" {
   default = "traefik:3.5.0"
 }
 
+variable "cf_dns_api_token" {
+  type = string
+}
+
 job "traefik" {
   type = "system"
 
@@ -38,6 +42,16 @@ job "traefik" {
         volumes = [
           "local/traefik.yaml:/etc/traefik/traefik.yaml",
         ]
+      }
+
+      env {
+        CF_DNS_API_TOKEN = var.cf_dns_api_token
+      }
+
+      # Needed for the NOMAD_TOKEN env var
+      identity {
+        env         = true
+        change_mode = "restart"
       }
 
       template {
