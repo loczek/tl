@@ -231,3 +231,31 @@ resource "aws_instance" "tl_instance" {
     }
   }
 }
+
+resource "aws_db_subnet_group" "default" {
+  name = "tl-db-subnet-group"
+
+  # TODO: make private for prod
+  subnet_ids = [
+    aws_subnet.public-1.id,
+    aws_subnet.public-2.id,
+    aws_subnet.public-3.id
+  ]
+
+  tags = {
+    Name = "tl-db-subnet-group"
+  }
+}
+
+resource "aws_db_instance" "database" {
+  allocated_storage    = 10
+  engine               = "postgres"
+  engine_version       = "17.6" # 17.4
+  instance_class       = "db.t4g.micro"
+  db_name              = "tl_prod"
+  username             = var.db_username
+  password             = var.db_password
+  availability_zone    = "eu-central-1b"
+  db_subnet_group_name = aws_db_subnet_group.default.name
+  apply_immediately    = true
+}
