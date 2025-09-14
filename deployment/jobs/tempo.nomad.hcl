@@ -54,13 +54,13 @@ job "tempo" {
           "--config.file=/etc/tempo/config/tempo.yml",
         ]
         volumes = [
-          "local/config:/etc/tempo/config",
+          "${NOMAD_TASK_DIR}/config:/etc/tempo/config",
         ]
       }
 
       template {
         data        = file("./deployment/jobs/templates/tempo.yml.tmpl")
-        destination = "local/config/tempo.yml"
+        destination = "${NOMAD_TASK_DIR}/config/tempo.yml"
       }
 
       resources {

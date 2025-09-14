@@ -79,7 +79,7 @@ job "server" {
         {{ end -}}
         EOF
         env         = true
-        destination = "local/other.env"
+        destination = "${NOMAD_TASK_DIR}/other.env"
       }
 
       resources {

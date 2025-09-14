@@ -43,8 +43,8 @@ job "grafana" {
         # GF_LOG_LEVEL          = "DEBUG"
         # GF_LOG_MODE           = "console"
         GF_SERVER_HTTP_PORT   = "${NOMAD_PORT_http}"
-        GF_PATHS_PROVISIONING = "/local/grafana/provisioning"
-        GF_PATHS_CONFIG       = "/local/grafana/grafana.ini"
+        GF_PATHS_PROVISIONING = "${NOMAD_TASK_DIR}/grafana/provisioning"
+        GF_PATHS_CONFIG       = "${NOMAD_TASK_DIR}/grafana/grafana.ini"
       }
 
       template {
@@ -62,12 +62,12 @@ job "grafana" {
         data        = <<EOF
 
 EOF
-        destination = "/local/grafana/grafana.ini"
+        destination = "${NOMAD_TASK_DIR}/grafana/grafana.ini"
       }
 
       template {
         data        = file("./deployment/jobs/templates/datasources.yml.tmpl")
-        destination = "/local/grafana/provisioning/datasources/datasources.yaml"
+        destination = "${NOMAD_TASK_DIR}/grafana/provisioning/datasources/datasources.yaml"
       }
 
       resources {

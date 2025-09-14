@@ -42,13 +42,13 @@ job "prometheus" {
           # "--web.console.templates=/usr/share/prometheus/consoles"
         ]
         volumes = [
-          "local/config:/etc/prometheus/config",
+          "${NOMAD_TASK_DIR}/config:/etc/prometheus/config",
         ]
       }
 
       template {
         data        = file("./deployment/jobs/templates/prometheus.yml.tmpl")
-        destination = "local/config/prometheus.yml"
+        destination = "${NOMAD_TASK_DIR}/config/prometheus.yml"
       }
 
       #       template {
@@ -67,7 +67,7 @@ job "prometheus" {
 
       #         change_mode   = "signal"
       #         change_signal = "SIGHUP"
-      #         destination   = "local/config/prometheus.yml"
+      #         destination   = "${NOMAD_TASK_DIR}/config/prometheus.yml"
       #       }
 
       resources {

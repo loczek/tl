@@ -40,7 +40,7 @@ job "traefik" {
           "https"
         ]
         volumes = [
-          "local/traefik.yaml:/etc/traefik/traefik.yaml",
+          "${NOMAD_TASK_DIR}/traefik.yaml:/etc/traefik/traefik.yaml",
         ]
       }
 
@@ -56,7 +56,7 @@ job "traefik" {
 
       template {
         data        = file("./deployment/jobs/templates/traefik.yml.tmpl")
-        destination = "local/traefik.yaml"
+        destination = "${NOMAD_TASK_DIR}/traefik.yaml"
       }
 
       service {
