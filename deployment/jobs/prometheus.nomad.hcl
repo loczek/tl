@@ -42,7 +42,7 @@ job "prometheus" {
           # "--web.console.templates=/usr/share/prometheus/consoles"
         ]
         volumes = [
-          "${NOMAD_TASK_DIR}/config:/etc/prometheus/config",
+          "local/config:/etc/prometheus/config",
         ]
       }
 

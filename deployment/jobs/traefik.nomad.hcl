@@ -40,7 +40,7 @@ job "traefik" {
           "https"
         ]
         volumes = [
-          "${NOMAD_TASK_DIR}/traefik.yaml:/etc/traefik/traefik.yaml",
+          "local/traefik.yaml:/etc/traefik/traefik.yaml",
         ]
       }
 

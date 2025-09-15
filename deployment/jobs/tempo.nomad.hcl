@@ -54,7 +54,7 @@ job "tempo" {
           "--config.file=/etc/tempo/config/tempo.yml",
         ]
         volumes = [
-          "${NOMAD_TASK_DIR}/config:/etc/tempo/config",
+          "local/config:/etc/tempo/config",
         ]
       }
 

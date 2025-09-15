@@ -26,7 +26,7 @@ job "loki" {
         ports = ["http"]
         volumes = [
           # "loki-data:/loki",
-          "${NOMAD_TASK_DIR}/config/loki.yaml:/etc/loki/loki.yaml",
+          "local/config/loki.yaml:/etc/loki/loki.yaml",
         ]
       }
 
