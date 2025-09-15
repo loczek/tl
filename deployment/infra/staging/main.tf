@@ -234,6 +234,11 @@ resource "aws_instance" "tl_instance" {
   }
 }
 
+resource "aws_eip" "static_ip" {
+  instance = aws_instance.tl_instance.id
+  domain   = "vpc"
+}
+
 resource "aws_db_subnet_group" "default" {
   name = "tl-db-subnet-group"
 
