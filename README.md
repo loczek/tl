@@ -9,6 +9,10 @@ TiiinyLink is a link shortener service that is designed to be highly available a
 > [!Note]  
 > The project is still work in progress.
 
+## Architecture
+
+<img src="architecture.png">
+
 ## Development Setup
 
 Follow these steps to set up your development environment:
