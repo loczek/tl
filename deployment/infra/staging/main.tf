@@ -225,10 +225,12 @@ resource "aws_instance" "tl_instance" {
 
   instance_market_options {
     market_type = "spot"
-    spot_options {
-      instance_interruption_behavior = "hibernate"
-      spot_instance_type             = "persistent"
-    }
+
+    // Error: creating EC2 Instance: operation error EC2: RunInstances, https response error StatusCode: 400, RequestID: 4d52f106-634a-4f2e-9fd3-3eb0ed5ed6ed, api error UnsupportedHibernationConfiguration: For hibernation, the root device volume must be encrypted.
+    # spot_options {
+    #   instance_interruption_behavior = "hibernate"
+    #   spot_instance_type             = "persistent"
+    # }
   }
 }
 
