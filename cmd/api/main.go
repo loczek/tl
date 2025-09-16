@@ -5,9 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	fiberlogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -36,10 +34,8 @@ func (s *ApiServer) Run() *fiber.App {
 
 	app := fiber.New()
 
-	app.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler())).Name("metrics")
-
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173",
+		AllowOrigins: "http://localhost:5173,http://short.com",
 		AllowHeaders: "Origin,Content-Type,Accept",
 	}))
 	if config.IsProd() {
@@ -58,12 +54,6 @@ func (s *ApiServer) Run() *fiber.App {
 	app.Use(middleware.AttachTraceContext())
 	app.Use(middleware.Logger())
 	app.Use(middleware.MetricsByName())
-
-	app.Static("/", "./website/dist").Name("index")
-
-	app.Use(favicon.New(favicon.Config{
-		File: "./website/dist/favicon.ico",
-	}))
 
 	healthHandler := health.NewHandler(log.With(slog.String("service", "health")))
 	app.Get("/health", healthHandler.Health).Name("health")
