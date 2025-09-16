@@ -68,8 +68,10 @@ func (s *ApiServer) Run() *fiber.App {
 	healthHandler := health.NewHandler(log.With(slog.String("service", "health")))
 	app.Get("/health", healthHandler.Health).Name("health")
 
-	tempHandler := temp.NewHandler(log.With(slog.String("service", "temp")))
+	tempHandler := temp.NewHandler(log.With(slog.String("service", "temp")), s.cache)
 	app.Get("/temp", tempHandler.Temp).Name("temp")
+	app.Get("/temp/calc", tempHandler.Calc).Name("temp.calc")
+	app.Get("/temp/cache", tempHandler.Cache).Name("temp.cache")
 	app.Get("/temp/notfound", tempHandler.NotFound).Name("temp.notfound")
 	app.Get("/temp/found", tempHandler.Found).Name("temp.found")
 	app.Get("/temp/panic", tempHandler.Panic).Name("temp.panic")
