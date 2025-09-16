@@ -33,7 +33,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: dockerfile.prod
+          file: ./dockerfile.prod
           push: true
           tags: |
             ghcr.io/${{ github.repository }}-server:latest
