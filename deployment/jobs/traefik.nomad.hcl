@@ -28,6 +28,13 @@ job "traefik" {
       }
     }
 
+    volume "traefik-certs" {
+      type            = "host"
+      source          = "traefik-volume"
+      access_mode     = "single-node-single-writer"
+      attachment_mode = "file-system"
+    }
+
     task "traefik" {
       driver = "docker"
 
@@ -42,6 +49,11 @@ job "traefik" {
         volumes = [
           "local/traefik.yaml:/etc/traefik/traefik.yaml",
         ]
+      }
+
+      volume_mount {
+        volume      = "traefik-certs"
+        destination = "/etc/traefik/acme"
       }
 
       env {
