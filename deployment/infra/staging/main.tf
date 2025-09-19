@@ -179,6 +179,14 @@ resource "aws_vpc_security_group_ingress_rule" "nomad-server-udp" {
   to_port           = 4648
 }
 
+resource "aws_vpc_security_group_ingress_rule" "prometheus_ui" {
+  security_group_id = aws_security_group.sg.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = var.my_ip
+  from_port         = 9090
+  to_port           = 9090
+}
+
 resource "aws_vpc_security_group_egress_rule" "all" {
   security_group_id = aws_security_group.sg.id
   ip_protocol       = -1
