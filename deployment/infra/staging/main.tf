@@ -243,8 +243,12 @@ resource "aws_instance" "tl_instance" {
 }
 
 resource "aws_eip" "static_ip" {
-  instance = aws_instance.tl_instance.id
-  domain   = "vpc"
+  domain = "vpc"
+}
+
+resource "aws_eip_association" "static_ip_assoc" {
+  instance_id   = aws_instance.tl_instance.id
+  allocation_id = aws_eip.static_ip.id
 }
 
 resource "aws_db_subnet_group" "default" {
