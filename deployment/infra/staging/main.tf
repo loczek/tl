@@ -117,6 +117,21 @@ resource "aws_route_table_association" "c" {
   route_table_id = aws_route_table.public.id
 }
 
+resource "aws_route_table_association" "d" {
+  subnet_id      = aws_subnet.private-1.id
+  route_table_id = aws_default_route_table.private.id
+}
+
+resource "aws_route_table_association" "e" {
+  subnet_id      = aws_subnet.private-2.id
+  route_table_id = aws_default_route_table.private.id
+}
+
+resource "aws_route_table_association" "f" {
+  subnet_id      = aws_subnet.private-3.id
+  route_table_id = aws_default_route_table.private.id
+}
+
 resource "aws_security_group" "sg" {
   name        = "tl-security-group"
   description = "example"
