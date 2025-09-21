@@ -205,26 +205,82 @@ resource "aws_vpc_security_group_ingress_rule" "traefik-ui" {
   to_port           = 8080
 }
 
+
+
+resource "aws_security_group" "nomad" {
+  name        = "tl-security-group-nomad"
+  description = "Nomad security group"
+  vpc_id      = aws_vpc.main.id
+}
+
 resource "aws_vpc_security_group_ingress_rule" "nomad" {
-  security_group_id = aws_security_group.sg.id
+  security_group_id = aws_security_group.nomad.id
   ip_protocol       = "tcp"
   cidr_ipv4         = var.my_ip
   from_port         = 4646
   to_port           = 4646
 }
 
-resource "aws_vpc_security_group_ingress_rule" "nomad-server-tcp" {
-  security_group_id = aws_security_group.sg.id
+resource "aws_vpc_security_group_ingress_rule" "nomad-http" {
+  security_group_id = aws_security_group.nomad.id
   ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = "10.0.0.0/16"
+  from_port         = 4646
+  to_port           = 4646
+}
+
+resource "aws_vpc_security_group_egress_rule" "nomad-http" {
+  security_group_id = aws_security_group.nomad.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "10.0.0.0/16"
+  from_port         = 4646
+  to_port           = 4646
+}
+
+resource "aws_vpc_security_group_ingress_rule" "nomad-client-server-rpc" {
+  security_group_id = aws_security_group.nomad.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "10.0.0.0/16"
+  from_port         = 4647
+  to_port           = 4647
+}
+
+resource "aws_vpc_security_group_egress_rule" "nomad-client-server-rpc" {
+  security_group_id = aws_security_group.nomad.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "10.0.0.0/16"
+  from_port         = 4647
+  to_port           = 4647
+}
+
+resource "aws_vpc_security_group_ingress_rule" "nomad-server-gossip-tcp" {
+  security_group_id = aws_security_group.nomad.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "10.0.0.0/16"
   from_port         = 4648
   to_port           = 4648
 }
 
-resource "aws_vpc_security_group_ingress_rule" "nomad-server-udp" {
-  security_group_id = aws_security_group.sg.id
+resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-tcp" {
+  security_group_id = aws_security_group.nomad.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "10.0.0.0/16"
+  from_port         = 4648
+  to_port           = 4648
+}
+
+resource "aws_vpc_security_group_ingress_rule" "nomad-server-gossip-udp" {
+  security_group_id = aws_security_group.nomad.id
   ip_protocol       = "udp"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = "10.0.0.0/16"
+  from_port         = 4648
+  to_port           = 4648
+}
+
+resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-udp" {
+  security_group_id = aws_security_group.nomad.id
+  ip_protocol       = "udp"
+  cidr_ipv4         = "10.0.0.0/16"
   from_port         = 4648
   to_port           = 4648
 }
