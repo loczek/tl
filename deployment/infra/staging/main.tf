@@ -189,20 +189,26 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
   to_port           = 443
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ssh" {
-  security_group_id = aws_security_group.sg.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = var.ip_whitelist
-  from_port         = 22
-  to_port           = 22
-}
-
 resource "aws_vpc_security_group_ingress_rule" "traefik-ui" {
   security_group_id = aws_security_group.sg.id
   ip_protocol       = "tcp"
   cidr_ipv4         = var.ip_whitelist
   from_port         = 8080
   to_port           = 8080
+}
+
+resource "aws_security_group" "ssh" {
+  name        = "tl-security-group-ssh"
+  description = "SSH security group"
+  vpc_id      = aws_vpc.main.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ssh" {
+  security_group_id = aws_security_group.ssh.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = var.ip_whitelist
+  from_port         = 22
+  to_port           = 22
 }
 
 
