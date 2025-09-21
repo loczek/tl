@@ -192,7 +192,7 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
 resource "aws_vpc_security_group_ingress_rule" "ssh" {
   security_group_id = aws_security_group.sg.id
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.my_ip
+  cidr_ipv4         = var.ip_whitelist
   from_port         = 22
   to_port           = 22
 }
@@ -200,7 +200,7 @@ resource "aws_vpc_security_group_ingress_rule" "ssh" {
 resource "aws_vpc_security_group_ingress_rule" "traefik-ui" {
   security_group_id = aws_security_group.sg.id
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.my_ip
+  cidr_ipv4         = var.ip_whitelist
   from_port         = 8080
   to_port           = 8080
 }
@@ -216,7 +216,7 @@ resource "aws_security_group" "nomad" {
 resource "aws_vpc_security_group_ingress_rule" "nomad" {
   security_group_id = aws_security_group.nomad.id
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.my_ip
+  cidr_ipv4         = var.ip_whitelist
   from_port         = 4646
   to_port           = 4646
 }
@@ -288,7 +288,7 @@ resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-udp" {
 resource "aws_vpc_security_group_ingress_rule" "prometheus_ui" {
   security_group_id = aws_security_group.sg.id
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.my_ip
+  cidr_ipv4         = var.ip_whitelist
   from_port         = 9090
   to_port           = 9090
 }

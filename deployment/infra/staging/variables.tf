@@ -1,6 +1,7 @@
-variable "my_ip" {
-  type      = string
-  sensitive = true
+variable "ip_whitelist" {
+  type        = string
+  description = "IPv4 address that is able to connect to private services"
+  sensitive   = true
 }
 
 variable "github_token" {
