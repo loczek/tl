@@ -3,10 +3,10 @@ variable "image" {
   default = "postgres:17.5-alpine"
 }
 
-job postgres {
-  group postgres {
+job "postgres" {
+  group "postgres" {
     network {
-      port postgres {
+      port "postgres" {
         static = 5432
       }
     }
