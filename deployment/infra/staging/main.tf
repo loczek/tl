@@ -315,6 +315,40 @@ resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-udp" {
   to_port           = 4648
 }
 
+resource "aws_iam_role" "nomad_server_role" {
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_policy" "nomad_server_policy" {
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["ec2:DescribeInstances"]
+      Resource = "*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "nomad_server_attach" {
+  role       = aws_iam_role.nomad_server_role.name
+  policy_arn = aws_iam_policy.nomad_server_policy.arn
+}
+
+resource "aws_iam_instance_profile" "nomad_server_profile" {
+  name = "nomad-server-profile"
+  role = aws_iam_role.nomad_server_role.name
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -351,6 +385,7 @@ resource "aws_instance" "tl_instance" {
   ]
   key_name                    = aws_key_pair.deployer.key_name
   user_data_replace_on_change = true
+  iam_instance_profile        = aws_iam_instance_profile.nomad_server_profile.name
   user_data = templatefile("${path.module}/../scripts/main.sh.tmpl", {
     GITHUB_TOKEN          = var.github_token
     GITHUB_USERNAME       = var.github_username
@@ -367,6 +402,14 @@ resource "aws_instance" "tl_instance" {
     #   instance_interruption_behavior = "hibernate"
     #   spot_instance_type             = "persistent"
     # }
+  }
+
+  metadata_options {
+    instance_metadata_tags = "enabled"
+  }
+
+  tags = {
+    "NomadServer" = true
   }
 }
 
