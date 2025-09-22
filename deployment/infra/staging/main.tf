@@ -168,7 +168,7 @@ resource "aws_route_table_association" "f" {
 }
 
 resource "aws_security_group" "public" {
-  name        = "tl-sg"
+  name        = "tl-sg-public"
   description = "HTTP/HTTPS ingress security group"
   vpc_id      = aws_vpc.main.id
 }
@@ -195,125 +195,76 @@ resource "aws_vpc_security_group_egress_rule" "all" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-resource "aws_security_group" "ssh" {
-  name        = "tl-sg-ssh"
+resource "aws_security_group" "internal" {
+  name        = "tl-sg-internal"
+  description = "HTTP/HTTPS ingress security group"
+  vpc_id      = aws_vpc.main.id
+}
+
+resource "aws_vpc_security_group_egress_rule" "internet" {
+  security_group_id = aws_security_group.internal.id
+  ip_protocol       = -1
+  cidr_ipv6         = "::/0"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "internal" {
+  security_group_id = aws_security_group.internal.id
+  ip_protocol       = -1
+  cidr_ipv4         = "10.0.0.0/16"
+}
+
+resource "aws_vpc_security_group_egress_rule" "internal" {
+  security_group_id = aws_security_group.internal.id
+  ip_protocol       = -1
+  cidr_ipv4         = "10.0.0.0/16"
+}
+
+resource "aws_security_group" "private" {
+  name        = "tl-sg-private"
   description = "SSH security group"
   vpc_id      = aws_vpc.main.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "ssh" {
-  security_group_id = aws_security_group.ssh.id
+  security_group_id = aws_security_group.private.id
   ip_protocol       = "tcp"
   cidr_ipv4         = var.ip_whitelist
   from_port         = 22
   to_port           = 22
 }
 
-resource "aws_security_group" "traefik" {
-  name        = "tl-sg-traefik"
-  description = "Traefik security group"
-  vpc_id      = aws_vpc.main.id
+resource "aws_vpc_security_group_egress_rule" "ssh" {
+  security_group_id = aws_security_group.private.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = var.ip_whitelist
+  from_port         = 22
+  to_port           = 22
 }
 
 resource "aws_vpc_security_group_ingress_rule" "traefik-ui" {
-  security_group_id = aws_security_group.traefik.id
+  security_group_id = aws_security_group.private.id
   ip_protocol       = "tcp"
   cidr_ipv4         = var.ip_whitelist
   from_port         = 8080
   to_port           = 8080
 }
 
-resource "aws_security_group" "prometheus" {
-  name        = "tl-sg-prometheus"
-  description = "Prometheus security group"
-  vpc_id      = aws_vpc.main.id
-}
-
 resource "aws_vpc_security_group_ingress_rule" "prometheus_ui" {
-  security_group_id = aws_security_group.prometheus.id
+  security_group_id = aws_security_group.private.id
   ip_protocol       = "tcp"
   cidr_ipv4         = var.ip_whitelist
   from_port         = 9090
   to_port           = 9090
 }
 
-resource "aws_security_group" "nomad" {
-  name        = "tl-sg-nomad"
-  description = "Nomad security group"
-  vpc_id      = aws_vpc.main.id
-}
-
 resource "aws_vpc_security_group_ingress_rule" "nomad" {
-  security_group_id = aws_security_group.nomad.id
+  security_group_id = aws_security_group.private.id
   ip_protocol       = "tcp"
   cidr_ipv4         = var.ip_whitelist
   from_port         = 4646
   to_port           = 4646
 }
 
-resource "aws_vpc_security_group_ingress_rule" "nomad-http" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4646
-  to_port           = 4646
-}
-
-resource "aws_vpc_security_group_egress_rule" "nomad-http" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4646
-  to_port           = 4646
-}
-
-resource "aws_vpc_security_group_ingress_rule" "nomad-client-server-rpc" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4647
-  to_port           = 4647
-}
-
-resource "aws_vpc_security_group_egress_rule" "nomad-client-server-rpc" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4647
-  to_port           = 4647
-}
-
-resource "aws_vpc_security_group_ingress_rule" "nomad-server-gossip-tcp" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4648
-  to_port           = 4648
-}
-
-resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-tcp" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4648
-  to_port           = 4648
-}
-
-resource "aws_vpc_security_group_ingress_rule" "nomad-server-gossip-udp" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "udp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4648
-  to_port           = 4648
-}
-
-resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-udp" {
-  security_group_id = aws_security_group.nomad.id
-  ip_protocol       = "udp"
-  cidr_ipv4         = "10.0.0.0/16"
-  from_port         = 4648
-  to_port           = 4648
-}
 
 resource "aws_iam_role" "nomad_server_role" {
   assume_role_policy = jsonencode({
