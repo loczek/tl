@@ -167,14 +167,14 @@ resource "aws_route_table_association" "f" {
   route_table_id = aws_default_route_table.private.id
 }
 
-resource "aws_security_group" "sg" {
-  name        = "tl-security-group"
-  description = "example"
+resource "aws_security_group" "public" {
+  name        = "tl-sg"
+  description = "HTTP/HTTPS ingress security group"
   vpc_id      = aws_vpc.main.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "http" {
-  security_group_id = aws_security_group.sg.id
+  security_group_id = aws_security_group.public.id
   ip_protocol       = "tcp"
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 80
@@ -182,23 +182,21 @@ resource "aws_vpc_security_group_ingress_rule" "http" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "https" {
-  security_group_id = aws_security_group.sg.id
+  security_group_id = aws_security_group.public.id
   ip_protocol       = "tcp"
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
   to_port           = 443
 }
 
-resource "aws_vpc_security_group_ingress_rule" "traefik-ui" {
-  security_group_id = aws_security_group.sg.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = var.ip_whitelist
-  from_port         = 8080
-  to_port           = 8080
+resource "aws_vpc_security_group_egress_rule" "all" {
+  security_group_id = aws_security_group.public.id
+  ip_protocol       = -1
+  cidr_ipv4         = "0.0.0.0/0"
 }
 
 resource "aws_security_group" "ssh" {
-  name        = "tl-security-group-ssh"
+  name        = "tl-sg-ssh"
   description = "SSH security group"
   vpc_id      = aws_vpc.main.id
 }
@@ -211,10 +209,36 @@ resource "aws_vpc_security_group_ingress_rule" "ssh" {
   to_port           = 22
 }
 
+resource "aws_security_group" "traefik" {
+  name        = "tl-sg-traefik"
+  description = "Traefik security group"
+  vpc_id      = aws_vpc.main.id
+}
 
+resource "aws_vpc_security_group_ingress_rule" "traefik-ui" {
+  security_group_id = aws_security_group.traefik.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = var.ip_whitelist
+  from_port         = 8080
+  to_port           = 8080
+}
+
+resource "aws_security_group" "prometheus" {
+  name        = "tl-sg-prometheus"
+  description = "Prometheus security group"
+  vpc_id      = aws_vpc.main.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "prometheus_ui" {
+  security_group_id = aws_security_group.prometheus.id
+  ip_protocol       = "tcp"
+  cidr_ipv4         = var.ip_whitelist
+  from_port         = 9090
+  to_port           = 9090
+}
 
 resource "aws_security_group" "nomad" {
-  name        = "tl-security-group-nomad"
+  name        = "tl-sg-nomad"
   description = "Nomad security group"
   vpc_id      = aws_vpc.main.id
 }
@@ -291,20 +315,6 @@ resource "aws_vpc_security_group_egress_rule" "nomad-server-gossip-udp" {
   to_port           = 4648
 }
 
-resource "aws_vpc_security_group_ingress_rule" "prometheus_ui" {
-  security_group_id = aws_security_group.sg.id
-  ip_protocol       = "tcp"
-  cidr_ipv4         = var.ip_whitelist
-  from_port         = 9090
-  to_port           = 9090
-}
-
-resource "aws_vpc_security_group_egress_rule" "all" {
-  security_group_id = aws_security_group.sg.id
-  ip_protocol       = -1
-  cidr_ipv4         = "0.0.0.0/0"
-}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -332,7 +342,13 @@ resource "aws_instance" "tl_instance" {
   instance_type               = "c6gd.medium"
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.public-2.id
-  vpc_security_group_ids      = [aws_security_group.sg.id]
+  vpc_security_group_ids = [
+    aws_security_group.nomad.id,
+    aws_security_group.prometheus.id,
+    aws_security_group.public.id,
+    aws_security_group.ssh.id,
+    aws_security_group.traefik.id,
+  ]
   key_name                    = aws_key_pair.deployer.key_name
   user_data_replace_on_change = true
   user_data = templatefile("${path.module}/../scripts/main.sh.tmpl", {
