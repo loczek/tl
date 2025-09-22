@@ -328,11 +328,9 @@ resource "aws_instance" "tl_instance" {
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.public-2.id
   vpc_security_group_ids = [
-    aws_security_group.nomad.id,
-    aws_security_group.prometheus.id,
     aws_security_group.public.id,
-    aws_security_group.ssh.id,
-    aws_security_group.traefik.id,
+    aws_security_group.private.id,
+    aws_security_group.internal.id,
   ]
   key_name                    = aws_key_pair.deployer.key_name
   user_data_replace_on_change = true
