@@ -12,6 +12,12 @@ job "server" {
   group "server" {
     count = 2
 
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "ingress"
+    }
+
     network {
       port "http" {
         to = 3000

@@ -10,6 +10,12 @@ variable "cf_dns_api_token" {
 job "traefik" {
   type = "system"
 
+  constraint {
+    attribute = "${meta.role}"
+    operator  = "="
+    value     = "ingress"
+  }
+
   group "traefik" {
     network {
       port "traefik" {

@@ -5,6 +5,12 @@ variable "image" {
 
 job "loki" {
   group "loki" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "monitoring"
+    }
+
     network {
       port "http" {
         static = 3100

@@ -5,6 +5,12 @@ variable "image" {
 
 job "postgres" {
   group "postgres" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "database"
+    }
+
     network {
       port "postgres" {
         static = 5432

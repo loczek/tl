@@ -5,6 +5,11 @@ variable "image" {
 
 job "redis" {
   group "redis" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "ingress"
+    }
 
     network {
       port "redis" {

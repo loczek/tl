@@ -5,6 +5,12 @@ variable "image" {
 
 job "tempo" {
   group "tempo" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "monitoring"
+    }
+
     network {
       port "http" {
         to = 3200

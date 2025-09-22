@@ -10,6 +10,12 @@ variable "image" {
 
 job "website" {
   group "website" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "ingress"
+    }
+
     network {
       port "http" {
         to = 80

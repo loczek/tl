@@ -10,6 +10,12 @@ variable "image" {
 
 job "grafana" {
   group "grafana" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "monitoring"
+    }
+
     network {
       port "http" {
         static = 9000

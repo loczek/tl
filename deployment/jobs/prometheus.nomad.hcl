@@ -5,6 +5,11 @@ variable "image" {
 
 job "prometheus" {
   group "prometheus" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "="
+      value     = "monitoring"
+    }
 
     network {
       port "http" {
