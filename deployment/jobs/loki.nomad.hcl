@@ -7,7 +7,7 @@ job "loki" {
   group "loki" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "monitoring"
     }
 

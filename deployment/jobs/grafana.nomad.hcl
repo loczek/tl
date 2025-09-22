@@ -12,7 +12,7 @@ job "grafana" {
   group "grafana" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "monitoring"
     }
 

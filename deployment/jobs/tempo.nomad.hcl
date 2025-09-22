@@ -7,7 +7,7 @@ job "tempo" {
   group "tempo" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "monitoring"
     }
 

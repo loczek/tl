@@ -7,7 +7,7 @@ job "redis" {
   group "redis" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "ingress"
     }
 

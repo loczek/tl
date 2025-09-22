@@ -12,7 +12,7 @@ job "website" {
   group "website" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "ingress"
     }
 

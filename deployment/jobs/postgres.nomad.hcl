@@ -7,7 +7,7 @@ job "postgres" {
   group "postgres" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "database"
     }
 

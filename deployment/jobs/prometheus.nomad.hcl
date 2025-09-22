@@ -7,7 +7,7 @@ job "prometheus" {
   group "prometheus" {
     constraint {
       attribute = "${meta.role}"
-      operator  = "="
+      operator  = "set_contains"
       value     = "monitoring"
     }
 
