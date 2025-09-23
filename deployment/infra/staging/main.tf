@@ -343,14 +343,17 @@ resource "aws_instance" "tl_instance" {
     SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/nomad.hcl")
   })
 
+  root_block_device {
+    encrypted = true
+  }
+
   instance_market_options {
     market_type = "spot"
 
-    // Error: creating EC2 Instance: operation error EC2: RunInstances, https response error StatusCode: 400, RequestID: 4d52f106-634a-4f2e-9fd3-3eb0ed5ed6ed, api error UnsupportedHibernationConfiguration: For hibernation, the root device volume must be encrypted.
-    # spot_options {
-    #   instance_interruption_behavior = "hibernate"
-    #   spot_instance_type             = "persistent"
-    # }
+    spot_options {
+      instance_interruption_behavior = "stop"
+      spot_instance_type             = "persistent"
+    }
   }
 
   metadata_options {
