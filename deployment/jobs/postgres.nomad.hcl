@@ -1,6 +1,6 @@
 variable "image" {
   type    = string
-  default = "postgres:17.5-alpine"
+  default = "postgres:18.0-alpine"
 }
 
 job "postgres" {
