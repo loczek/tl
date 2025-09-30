@@ -30,12 +30,24 @@ job "postgres" {
       }
     }
 
-    task postgres {
+    volume "postgres-data" {
+      type            = "csi"
+      source          = "postgres-volume"
+      access_mode     = "single-node-writer"
+      attachment_mode = "file-system"
+    }
+
+    task "postgres" {
       driver = "docker"
 
       config {
         image = var.image
         ports = ["postgres"]
+      }
+
+      volume_mount {
+        volume      = "postgres-data"
+        destination = "/var/lib/postgresql"
       }
 
       template {
@@ -64,7 +76,6 @@ job "postgres" {
       mode     = "delay"
     }
   }
-
 
   update {
     max_parallel     = 1
