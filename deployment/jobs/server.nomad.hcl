@@ -5,7 +5,7 @@ variable "short_domain" {
 
 variable "image" {
   type    = string
-  default = "ghcr.io/loczek/tl-server"
+  default = "loczek/tl-server"
 }
 
 job "server" {

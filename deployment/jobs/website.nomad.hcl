@@ -5,7 +5,7 @@ variable "domain" {
 
 variable "image" {
   type    = string
-  default = "ghcr.io/loczek/tl-website"
+  default = "loczek/tl-website"
 }
 
 job "website" {
