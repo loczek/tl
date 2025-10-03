@@ -1,5 +1,11 @@
 job "plugin-aws-ebs-controller" {
   group "controller" {
+    constraint {
+      attribute = "${meta.role}"
+      operator  = "set_contains"
+      value     = "ingress"
+    }
+
     task "plugin" {
       driver = "docker"
 
