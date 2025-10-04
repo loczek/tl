@@ -3,7 +3,7 @@ job "plugin-aws-ebs-controller" {
     constraint {
       attribute = "${meta.role}"
       operator  = "set_contains"
-      value     = "ingress"
+      value     = "monitoring"
     }
 
     task "plugin" {
