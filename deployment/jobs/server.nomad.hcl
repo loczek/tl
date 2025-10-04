@@ -49,7 +49,7 @@ job "server" {
         LOG_TO_STDOUT               = false
         OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
         OTEL_METRIC_EXPORT_INTERVAL = "15000"
-        OTEL_SERVICE_NAME           = "go-link-shortener"
+        OTEL_SERVICE_NAME           = "tl-server"
       }
 
       template {
