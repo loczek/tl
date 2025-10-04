@@ -25,9 +25,10 @@ job "plugin-aws-ebs-controller" {
       }
 
       csi_plugin {
-        id        = "aws-ebs0"
-        type      = "controller"
-        mount_dir = "/csi"
+        id             = "aws-ebs0"
+        type           = "controller"
+        mount_dir      = "/csi"
+        health_timeout = "60s"
       }
 
       resources {

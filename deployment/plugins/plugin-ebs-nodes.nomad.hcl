@@ -19,9 +19,10 @@ job "plugin-aws-ebs-nodes" {
       }
 
       csi_plugin {
-        id        = "aws-ebs0"
-        type      = "node"
-        mount_dir = "/csi"
+        id             = "aws-ebs0"
+        type           = "node"
+        mount_dir      = "/csi"
+        health_timeout = "60s"
       }
 
       resources {
