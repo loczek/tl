@@ -6,7 +6,7 @@ TiiinyLink is a link shortener service that is designed to be highly available a
 
 ## Status
 
-> [!Note]  
+> [!Note]
 > The project is still work in progress.
 
 ## Architecture
