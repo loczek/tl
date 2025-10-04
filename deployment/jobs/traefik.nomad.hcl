@@ -3,10 +3,6 @@ variable "image" {
   default = "traefik:3.5.0"
 }
 
-variable "cf_dns_api_token" {
-  type = string
-}
-
 job "traefik" {
   type = "system"
 
@@ -62,8 +58,14 @@ job "traefik" {
         destination = "/etc/traefik/acme"
       }
 
-      env {
-        CF_DNS_API_TOKEN = var.cf_dns_api_token
+      template {
+        data        = <<-EOF
+        {{ with nomadVar "nomad/jobs/traefik" }}
+        CF_DNS_API_TOKEN = "{{ .cf_dns_api_token }}"
+        {{ end }}
+        EOF
+        env         = true
+        destination = "${NOMAD_SECRETS_DIR}/cf.env"
       }
 
       # Needed for the NOMAD_TOKEN env var
