@@ -8,7 +8,7 @@ job "redis" {
     constraint {
       attribute = "${meta.role}"
       operator  = "set_contains"
-      value     = "ingress"
+      value     = "database"
     }
 
     network {
