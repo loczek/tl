@@ -15,7 +15,7 @@ TiiinyLink is a link shortener service that is designed to be highly available a
 
 ## Production setup
 
-### Prerqueisites
+### Prerequisites
 
 - AWS CLI (setup and working)
 - Cloudflare (DNS API Token)
