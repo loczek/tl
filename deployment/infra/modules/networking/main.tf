@@ -7,6 +7,10 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_eip" "static_ip" {
+  domain = "vpc"
+}
+
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
   tags = {
