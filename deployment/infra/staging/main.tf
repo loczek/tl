@@ -362,12 +362,105 @@ resource "aws_key_pair" "deployer" {
   public_key = var.ssh_public_key
 }
 
+resource "aws_instance" "tl_monitoring_2" {
+  private_ip        = "10.0.144.8"
+  ami               = data.aws_ami.ubuntu.id
+  availability_zone = "eu-central-1b"
+  instance_type     = "t4g.small"
+  subnet_id         = aws_subnet.private-2.id
+  vpc_security_group_ids = [
+    aws_security_group.private.id,
+    aws_security_group.internal.id,
+  ]
+  key_name                    = aws_key_pair.deployer.key_name
+  user_data_replace_on_change = true
+  iam_instance_profile        = aws_iam_instance_profile.nomad_server_profile.name
+  user_data = templatefile("${path.module}/../scripts/monitoring.sh.tmpl", {
+    INSTALL_DOCKER_SCRIPT = file("${path.module}/../scripts/install-docker.sh")
+    INSTALL_NOMAD_SCRIPT  = file("${path.module}/../scripts/install-nomad.sh")
+    SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/monitoring.hcl")
+  })
+
+  root_block_device {
+    encrypted = true
+  }
+
+  instance_market_options {
+    market_type = "spot"
+
+    spot_options {
+      instance_interruption_behavior = "stop"
+      spot_instance_type             = "persistent"
+    }
+  }
+
+  metadata_options {
+    http_put_response_hop_limit = 5
+    http_protocol_ipv6          = "enabled"
+    instance_metadata_tags      = "enabled"
+  }
+
+  tags = {
+    "NomadServer" = true
+  }
+}
+
+resource "aws_instance" "tl_database" {
+  private_ip        = "10.0.144.16"
+  ami               = data.aws_ami.ubuntu.id
+  availability_zone = "eu-central-1b"
+  instance_type     = "t4g.micro"
+  subnet_id         = aws_subnet.private-2.id
+  vpc_security_group_ids = [
+    aws_security_group.private.id,
+    aws_security_group.internal.id,
+  ]
+  key_name                    = aws_key_pair.deployer.key_name
+  user_data_replace_on_change = true
+  iam_instance_profile        = aws_iam_instance_profile.nomad_server_profile.name
+  user_data = templatefile("${path.module}/../scripts/db.sh.tmpl", {
+    INSTALL_DOCKER_SCRIPT = file("${path.module}/../scripts/install-docker.sh")
+    INSTALL_NOMAD_SCRIPT  = file("${path.module}/../scripts/install-nomad.sh")
+    SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/database.hcl")
+  })
+
+  root_block_device {
+    encrypted = true
+  }
+
+  instance_market_options {
+    market_type = "spot"
+
+    spot_options {
+      instance_interruption_behavior = "stop"
+      spot_instance_type             = "persistent"
+    }
+  }
+
+  metadata_options {
+    instance_metadata_tags = "enabled"
+  }
+
+  tags = {
+    "NomadServer" = true
+  }
+}
+
+resource "aws_ebs_volume" "tl_database" {
+  availability_zone = "eu-central-1b"
+  size              = 20
+
+  tags = {
+    "Name" = "tl-ebs-database"
+  }
+}
+
 resource "aws_instance" "tl_instance" {
-  ami                         = data.aws_ami.ubuntu.id
-  availability_zone           = "eu-central-1b"
-  instance_type               = "c6gd.medium"
-  associate_public_ip_address = true
-  subnet_id                   = aws_subnet.public-2.id
+  ami               = data.aws_ami.ubuntu.id
+  availability_zone = "eu-central-1b"
+  instance_type     = "t4g.micro" // "c6gd.medium"
+  private_ip        = "10.0.16.8"
+  subnet_id         = aws_subnet.public-2.id
   vpc_security_group_ids = [
     aws_security_group.public.id,
     aws_security_group.private.id,
@@ -376,12 +469,10 @@ resource "aws_instance" "tl_instance" {
   key_name                    = aws_key_pair.deployer.key_name
   user_data_replace_on_change = true
   iam_instance_profile        = aws_iam_instance_profile.nomad_server_profile.name
-  user_data = templatefile("${path.module}/../scripts/main.sh.tmpl", {
-    GITHUB_TOKEN          = var.github_token
-    GITHUB_USERNAME       = var.github_username
+  user_data = templatefile("${path.module}/../scripts/ingress.sh.tmpl", {
     INSTALL_DOCKER_SCRIPT = file("${path.module}/../scripts/install-docker.sh")
     INSTALL_NOMAD_SCRIPT  = file("${path.module}/../scripts/install-nomad.sh")
-    SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/nomad.hcl")
+    SETUP_NOMAD_SCRIPT    = file("${path.module}/../../nomad/ingress.hcl")
   })
 
   root_block_device {
@@ -414,4 +505,3 @@ resource "aws_eip_association" "static_ip_assoc" {
   instance_id   = aws_instance.tl_instance.id
   allocation_id = aws_eip.static_ip.id
 }
-
