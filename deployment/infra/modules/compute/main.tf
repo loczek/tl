@@ -133,6 +133,7 @@ resource "aws_instance" "tl_monitoring" {
   }
 
   tags = {
+    "Name"        = "tl-monitoring"
     "NomadServer" = true
   }
 }
@@ -174,6 +175,7 @@ resource "aws_instance" "tl_database" {
   }
 
   tags = {
+    "Name"        = "tl-database"
     "NomadServer" = true
   }
 }
@@ -225,6 +227,7 @@ resource "aws_instance" "tl_instance" {
   }
 
   tags = {
+    "Name"        = "tl-ingress"
     "NomadServer" = true
   }
 }
