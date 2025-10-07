@@ -51,29 +51,18 @@ job "prometheus" {
         ]
       }
 
-      template {
-        data        = file("./deployment/jobs/templates/prometheus.yml.tmpl")
-        destination = "${NOMAD_TASK_DIR}/config/prometheus.yml"
+      # Needed for the NOMAD_TOKEN env var
+      identity {
+        env         = true
+        change_mode = "restart"
       }
 
-      #       template {
-      #         data = <<EOH
-      # ---
-      # global:
-      #   scrape_interval: 30s
-      #   evaluation_interval: 3s
-
-      # scrape_configs:
-      #   - job_name: prometheus
-      #     static_configs:
-      #     - targets:
-      #       - 0.0.0.0:9090
-      # EOH
-
-      #         change_mode   = "signal"
-      #         change_signal = "SIGHUP"
-      #         destination   = "${NOMAD_TASK_DIR}/config/prometheus.yml"
-      #       }
+      template {
+        data          = file("./deployment/jobs/templates/prometheus.yml.tmpl")
+        change_mode   = "signal"
+        change_signal = "SIGHUP"
+        destination   = "${NOMAD_TASK_DIR}/config/prometheus.yml"
+      }
 
       resources {
         cpu    = 200
