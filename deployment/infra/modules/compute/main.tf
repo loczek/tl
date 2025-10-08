@@ -142,7 +142,7 @@ resource "aws_instance" "tl_database" {
   private_ip        = "10.0.144.16"
   ami               = data.aws_ami.ubuntu.id
   availability_zone = "eu-central-1b"
-  instance_type     = "t4g.micro"
+  instance_type     = "t4g.small"
   subnet_id         = var.private_subnet[1]
   vpc_security_group_ids = [
     var.sg_private.id,
@@ -192,7 +192,7 @@ resource "aws_ebs_volume" "tl_database" {
 resource "aws_instance" "tl_instance" {
   ami               = data.aws_ami.ubuntu.id
   availability_zone = "eu-central-1b"
-  instance_type     = "t4g.micro" // "c6gd.medium"
+  instance_type     = "t4g.small" // "c6gd.medium"
   private_ip        = "10.0.16.8"
   subnet_id         = var.public_subnet[1]
   vpc_security_group_ids = [
