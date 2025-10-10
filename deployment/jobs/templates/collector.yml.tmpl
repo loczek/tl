@@ -1,0 +1,61 @@
+# Learn more about the OpenTelemetry Collector via
+# https://opentelemetry.io/docs/collector/
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: otel-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+
+processors:
+  # https://github.com/open-telemetry/opentelemetry-collector/blob/main/examples/local/otel-config.yaml#L15
+  memory_limiter:
+    limit_mib: 1365 # 75% of maximum memory up to 1G
+    spike_limit_mib: 256 # 25% of limit up to 1G
+    check_interval: 5s
+  batch:
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp/metrics:
+    endpoint: {{ range nomadService "prometheus" }}http://{{ .Address }}:{{ .Port }}{{ end }}
+    metrics_endpoint: {{ range nomadService "prometheus" }}http://{{ .Address }}:{{ .Port }}/api/v1/otlp/v1/metrics{{ end }}
+    tls:
+      insecure: true
+  otlphttp/logs:
+    endpoint: {{ range nomadService "loki" }}http://{{ .Address }}:{{ .Port }}/otlp{{ end }}
+    logs_endpoint: {{ range nomadService "loki" }}http://{{ .Address }}:{{ .Port }}/otlp/v1/logs{{ end }}
+    tls:
+      insecure: true
+  otlphttp/traces:
+    endpoint: {{ range nomadService "tempo-otlp-http" }}http://{{ .Address }}:{{ .Port }}/v1/traces{{ end }}
+    traces_endpoint: {{ range nomadService "tempo-otlp-http" }}http://{{ .Address }}:{{ .Port }}/v1/traces{{ end }}
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/logs]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/traces]
