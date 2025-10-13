@@ -87,6 +87,7 @@ exporters:
       insecure: true
   prometheus:
     endpoint: "0.0.0.0:8889"
+    translation_strategy: "UnderscoreEscapingWithoutSuffixes"
 
 service:
   pipelines:
