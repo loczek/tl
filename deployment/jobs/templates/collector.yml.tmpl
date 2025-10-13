@@ -15,6 +15,40 @@ receivers:
           scrape_interval: 10s
           static_configs:
             - targets: ["0.0.0.0:8888"]
+  hostmetrics:
+    collection_interval: 10s
+    root_path: /hostfs
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.logical.count:
+            enabled: true
+      disk:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+      load:
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+          system.memory.limit:
+            enabled: true
+      network:
+      process:
+        mute_process_user_error: true
+        metrics:
+          process.cpu.utilization:
+            enabled: true
+          process.memory.utilization:
+            enabled: true
+          process.threads:
+            enabled: true
+          process.paging.faults:
+            enabled: true
+      processes:
+      paging:
 
 processors:
   # https://github.com/open-telemetry/opentelemetry-collector/blob/main/examples/local/otel-config.yaml#L15
@@ -23,6 +57,15 @@ processors:
     spike_limit_mib: 256 # 25% of limit up to 1G
     check_interval: 5s
   batch:
+  resourcedetection/system:
+    detectors: ["system"]
+    system:
+        hostname_sources: ["os"]
+  transform:
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["host.name"], resource.attributes["host.name"])
 
 exporters:
   debug:
@@ -48,8 +91,8 @@ exporters:
 service:
   pipelines:
     metrics:
-      receivers: [otlp, prometheus]
-      processors: [memory_limiter, batch]
+      receivers: [otlp, prometheus, hostmetrics]
+      processors: [resourcedetection/system, transform, memory_limiter, batch]
       exporters: [prometheus]
     logs:
       receivers: [otlp]
