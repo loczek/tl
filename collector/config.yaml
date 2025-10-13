@@ -30,6 +30,7 @@ receivers:
       paging:
 
 processors:
+  # https://github.com/open-telemetry/opentelemetry-collector/blob/main/examples/local/otel-config.yaml#L15
   memory_limiter:
     limit_mib: 1365 # 75% of maximum memory up to 1G
     spike_limit_mib: 256 # 25% of limit up to 1G
