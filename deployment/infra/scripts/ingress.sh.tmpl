@@ -3,6 +3,8 @@ set -eo pipefail
 
 ${INSTALL_DOCKER_SCRIPT}
 
+sudo usermod -aG docker ubuntu
+
 ${INSTALL_NOMAD_SCRIPT}
 
 sudo cat <<EOF | sudo tee /etc/nomad.d/nomad.hcl

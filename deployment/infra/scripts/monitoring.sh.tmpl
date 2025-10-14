@@ -10,6 +10,7 @@ sudo cat <<EOF | sudo tee /etc/docker/daemon.json
 EOF
 
 sudo systemctl restart docker
+sudo usermod -aG docker ubuntu
 
 ${INSTALL_NOMAD_SCRIPT}
 
