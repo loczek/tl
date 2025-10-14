@@ -57,10 +57,8 @@ processors:
     spike_limit_mib: 256 # 25% of limit up to 1G
     check_interval: 5s
   batch:
-  resourcedetection/system:
-    detectors: ["system"]
-    system:
-        hostname_sources: ["os"]
+  resourcedetection/docker:
+    detectors: [docker]
   transform:
     metric_statements:
       - context: datapoint
@@ -93,7 +91,7 @@ service:
   pipelines:
     metrics:
       receivers: [otlp, prometheus, hostmetrics]
-      processors: [resourcedetection/system, transform, memory_limiter, batch]
+      processors: [resourcedetection/docker, transform, memory_limiter, batch]
       exporters: [prometheus]
     logs:
       receivers: [otlp]
