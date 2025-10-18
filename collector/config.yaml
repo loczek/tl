@@ -16,7 +16,6 @@ receivers:
           static_configs:
             - targets: ["0.0.0.0:8888"]
   hostmetrics:
-    root_path: /hostfs
     scrapers:
       cpu:
       disk:
