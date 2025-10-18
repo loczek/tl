@@ -1,5 +1,7 @@
 <img src="banner.png">
 
+[![Build docker images](https://github.com/loczek/tl/actions/workflows/build.yaml/badge.svg)](https://github.com/loczek/tl/actions/workflows/build.yaml)
+
 # Overview
 
 TiiinyLink is a link shortener service that is designed to be scalable, highly available and as much vendor agnostic as possible.
