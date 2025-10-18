@@ -2,7 +2,7 @@
 
 # Overview
 
-TiiinyLink is a link shortener service that is designed to be highly available and scalable.
+TiiinyLink is a link shortener service that is designed to be scalable, highly available and as much vendor agnostic as possible.
 
 ## Status
 
