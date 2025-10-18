@@ -80,13 +80,6 @@ func (s *Store) CreateReport(ctx context.Context, urlID int) (*Report, error) {
 		return nil, err
 	}
 
-	// count, err := res.RowsAffected()
-	// if err != nil {
-	// 	span.SetStatus(codes.Error, err.Error())
-	// 	span.RecordError(err)
-	// 	return 0, err
-	// }
-
 	span.SetStatus(codes.Ok, "")
 
 	return &response, nil
