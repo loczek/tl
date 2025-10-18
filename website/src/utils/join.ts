@@ -1,3 +1,3 @@
-export function joinStrings(...args: string[]) {
+export function joinPaths(...args: string[]) {
   return args.join("/");
 }

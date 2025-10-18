@@ -7,7 +7,7 @@ import Loader from "./components/Loader";
 import { shortPrefix } from "./constants/http";
 import { writeToClipboard } from "./utils/clipboard";
 import { postData } from "./utils/fetch";
-import { joinStrings } from "./utils/join";
+import { joinPaths } from "./utils/join";
 import { sleep } from "./utils/sleep";
 
 const apiAddResponseSchema = z.object({ short_code: z.string() });
@@ -31,7 +31,7 @@ function App() {
         const data = await postData(
           shortPrefix + "/api/add",
           { url },
-          apiAddResponseSchema,
+          apiAddResponseSchema
         );
 
         setShortCode(data.short_code);
@@ -58,12 +58,12 @@ function App() {
             {shortCode ? (
               <>
                 <div className="px-6 py-4 bg-[#1C1C1C] rounded-xl w-96 inline-block">
-                  {joinStrings(shortPrefix, shortCode)}
+                  {joinPaths(shortPrefix, shortCode)}
                 </div>
                 <Button
                   type="button"
                   onClick={() =>
-                    void writeToClipboard(joinStrings(shortPrefix, shortCode))
+                    void writeToClipboard(joinPaths(shortPrefix, shortCode))
                   }
                 >
                   Copy
