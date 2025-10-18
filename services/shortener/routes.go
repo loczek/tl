@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/loczek/tl/internal/base62"
 	"github.com/loczek/tl/internal/cache"
+	api_errors "github.com/loczek/tl/internal/errors"
 	"github.com/loczek/tl/internal/telemetry/metrics"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -83,17 +84,23 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 
 	body := new(Payload)
 	if err := c.BodyParser(body); err != nil {
-		return fiber.ErrBadRequest
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": api_errors.InvalidBodyShape,
+		})
 	}
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(body); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": api_errors.InvalidBodyData,
+		})
 	}
 
 	u, err := url.ParseRequestURI(body.Url)
 	if err != nil {
-		return fiber.ErrBadRequest
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": api_errors.InvalidUrl,
+		})
 	}
 
 	i := 0
@@ -103,7 +110,9 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 		seqInner := base62.RandomSeqRange(6, 8)
 		rowsAffectedInner, err := h.urlStore.AddUrl(ctx, seqInner, u.String())
 		if err != nil {
-			return err
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": api_errors.InternalServer,
+			})
 		}
 		if rowsAffectedInner == 0 {
 			metrics.CollisionsCounter.Add(c.Context(), 1)
@@ -119,7 +128,9 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 	}
 
 	if seq == "" {
-		return fiber.ErrInternalServerError
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": api_errors.InternalServer,
+		})
 	}
 
 	return c.JSON(&Response{

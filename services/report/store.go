@@ -23,7 +23,7 @@ func NewStore(db *sql.DB) *Store {
 
 type ReportStore interface {
 	GetReportByID(ctx context.Context, id int) (*Report, error)
-	CreateReport(ctx context.Context, urlID int) (int64, error)
+	CreateReport(ctx context.Context, urlID int) (*Report, error)
 }
 
 type Report struct {
@@ -59,7 +59,7 @@ func (s *Store) GetReportByID(ctx context.Context, id int) (*Report, error) {
 	return &response, nil
 }
 
-func (s *Store) CreateReport(ctx context.Context, urlID int) (int64, error) {
+func (s *Store) CreateReport(ctx context.Context, urlID int) (*Report, error) {
 	ctx, span := tracer.Start(
 		ctx,
 		"INSERT report",
@@ -70,21 +70,24 @@ func (s *Store) CreateReport(ctx context.Context, urlID int) (int64, error) {
 	)
 	defer span.End()
 
-	res, err := s.db.Exec("INSERT INTO reports (url_id) VALUES ($1)", urlID)
+	response := Report{}
+
+	err := s.db.QueryRow("INSERT INTO reports (url_id) VALUES ($1) RETURNING id, url_id, updated_at, created_at", urlID).
+		Scan(&response.ID, &response.URLID, &response.UpdatedAt, &response.CreatedAt)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return 0, err
+		return nil, err
 	}
 
-	count, err := res.RowsAffected()
-	if err != nil {
-		span.SetStatus(codes.Error, err.Error())
-		span.RecordError(err)
-		return 0, err
-	}
+	// count, err := res.RowsAffected()
+	// if err != nil {
+	// 	span.SetStatus(codes.Error, err.Error())
+	// 	span.RecordError(err)
+	// 	return 0, err
+	// }
 
 	span.SetStatus(codes.Ok, "")
 
-	return count, nil
+	return &response, nil
 }
