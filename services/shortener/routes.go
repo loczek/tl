@@ -103,6 +103,12 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 		})
 	}
 
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": api_errors.UnsupportedSchema,
+		})
+	}
+
 	i := 0
 	var seq string
 
