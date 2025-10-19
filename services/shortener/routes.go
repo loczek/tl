@@ -109,6 +109,10 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 		})
 	}
 
+	if u.Scheme == "http" {
+		u.Scheme = "https"
+	}
+
 	i := 0
 	var seq string
 
