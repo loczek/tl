@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -118,7 +119,7 @@ func (h *Handler) AddShortenedLink(c *fiber.Ctx) error {
 
 	for i < 5 {
 		seqInner := base62.RandomSeqRange(6, 8)
-		rowsAffectedInner, err := h.urlStore.AddUrl(ctx, seqInner, u.String())
+		rowsAffectedInner, err := h.urlStore.AddUrl(ctx, seqInner, strings.TrimSuffix(u.String(), "/"))
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": api_errors.InternalServer,
