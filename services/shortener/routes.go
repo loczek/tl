@@ -38,11 +38,10 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 
 	hash := c.Params("hash")
 
-	h.logger.InfoContext(ctx, "test", slog.String("name", c.Route().Name), slog.String("path", c.Route().Path))
-
 	val, err := h.cache.GetCacheKey(ctx, fmt.Sprintf("hash:%s", hash))
 	if err != nil {
-		return err
+		h.logger.ErrorContext(ctx, err.Error())
+		return fiber.ErrInternalServerError
 	}
 
 	if val != "" {
@@ -64,7 +63,8 @@ func (h *Handler) GetUnshortenedLink(c *fiber.Ctx) error {
 
 	err = h.cache.SetCacheKey(ctx, fmt.Sprintf("hash:%s", hash), data.OriginalURL, time.Minute)
 	if err != nil {
-		return err
+		h.logger.ErrorContext(ctx, err.Error())
+		return fiber.ErrInternalServerError
 	}
 
 	return c.Redirect(data.OriginalURL)

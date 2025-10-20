@@ -2,6 +2,9 @@ package report
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"log/slog"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -14,11 +17,14 @@ import (
 type Handler struct {
 	reportStore ReportStore
 	urlStore    shortener.UrlStore
-	cache       cache.Cache
+
+	cache cache.Cache
+
+	logger *slog.Logger
 }
 
-func NewHandler(db ReportStore, urlStore shortener.UrlStore, cache cache.Cache) *Handler {
-	return &Handler{db, urlStore, cache}
+func NewHandler(db ReportStore, urlStore shortener.UrlStore, cache cache.Cache, logger *slog.Logger) *Handler {
+	return &Handler{db, urlStore, cache, logger}
 }
 
 type Payload struct {
@@ -48,22 +54,30 @@ func (h *Handler) ReportLink(c *fiber.Ctx) error {
 
 	val, err := h.urlStore.GetUrl(ctx, body.ShortCode)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": api_errors.DatabaseQuery,
-		})
-	}
-
-	if val == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": api_errors.NotFound,
-		})
+		if errors.Is(err, sql.ErrNoRows) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": api_errors.NotFound,
+			})
+		} else {
+			h.logger.ErrorContext(ctx, err.Error())
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": api_errors.DatabaseQuery,
+			})
+		}
 	}
 
 	data, err := h.reportStore.CreateReport(ctx, val.ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": api_errors.DatabaseQuery,
-		})
+		if errors.Is(err, sql.ErrNoRows) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": api_errors.NotFound,
+			})
+		} else {
+			h.logger.ErrorContext(ctx, err.Error())
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": api_errors.DatabaseQuery,
+			})
+		}
 	}
 
 	metrics.ReportCounter.Add(context.Background(), 1)

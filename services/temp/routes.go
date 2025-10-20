@@ -75,7 +75,7 @@ func (h *Handler) NotFound(c *fiber.Ctx) error {
 }
 
 func (h *Handler) Panic(c *fiber.Ctx) error {
-	panic("wtf")
+	panic("panic route hit")
 }
 
 func (h *Handler) Err(c *fiber.Ctx) error {

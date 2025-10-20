@@ -13,6 +13,7 @@ import (
 	fiberutils "github.com/gofiber/fiber/v2/utils"
 	"github.com/loczek/tl/internal/cache"
 	"github.com/loczek/tl/internal/config"
+	api_errors "github.com/loczek/tl/internal/errors"
 	"github.com/loczek/tl/internal/middleware"
 	"github.com/loczek/tl/services/health"
 	"github.com/loczek/tl/services/report"
@@ -68,7 +69,8 @@ func (s *ApiServer) Run() *fiber.App {
 	app.Get("/temp/error", tempHandler.Err).Name("temp.err")
 
 	reportStore := report.NewStore(s.db)
-	reportHandler := report.NewHandler(reportStore, shortener.NewStore(s.db), s.cache)
+	reportLogger := log.With(slog.String("service", "report"))
+	reportHandler := report.NewHandler(reportStore, shortener.NewStore(s.db), s.cache, reportLogger)
 	app.Post("/api/report", reportHandler.ReportLink).Name("api.report")
 
 	shortenerHandler := shortener.NewHandler(
@@ -80,7 +82,9 @@ func (s *ApiServer) Run() *fiber.App {
 	app.Get("/:hash", shortenerHandler.GetUnshortenedLink).Name("hash")
 
 	app.Use(func(c *fiber.Ctx) error {
-		return c.SendStatus(404)
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": api_errors.NotFound,
+		})
 	})
 
 	return app
