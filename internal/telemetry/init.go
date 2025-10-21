@@ -15,7 +15,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/prometheus"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/log/global"
-	skdlog "go.opentelemetry.io/otel/sdk/log"
+	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -85,16 +85,16 @@ func NewMeterProviderHttp(res *sdkresource.Resource) (*sdkmetric.MeterProvider, 
 	return meterProvider, nil
 }
 
-func NewLoggerProvider(res *sdkresource.Resource) (*skdlog.LoggerProvider, error) {
+func NewLoggerProvider(res *sdkresource.Resource) (*sdklog.LoggerProvider, error) {
 	exporter, err := otlploghttp.New(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	loggerProvider := skdlog.NewLoggerProvider(
-		skdlog.WithResource(res),
-		skdlog.WithProcessor(
-			skdlog.NewBatchProcessor(exporter, skdlog.WithExportInterval(time.Second*15)),
+	loggerProvider := sdklog.NewLoggerProvider(
+		sdklog.WithResource(res),
+		sdklog.WithProcessor(
+			sdklog.NewBatchProcessor(exporter, sdklog.WithExportInterval(time.Second*15)),
 		),
 	)
 
