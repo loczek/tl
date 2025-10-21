@@ -31,7 +31,7 @@ function App() {
         const data = await postData(
           shortPrefix + "/api/add",
           { url },
-          apiAddResponseSchema
+          apiAddResponseSchema,
         );
 
         setShortCode(data.short_code);
