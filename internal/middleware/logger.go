@@ -13,11 +13,13 @@ func Logger() func(c *fiber.Ctx) error {
 		err := c.Next()
 		end := time.Since(start)
 		slog.Info("got request",
-			slog.String("method", c.Route().Method),
-			slog.String("path", c.Route().Path),
-			slog.String("time", end.String()),
-			slog.String("ip", c.IP()),
-			slog.String("id", c.Locals("requestid").(string)),
+			slog.Group("request",
+				slog.String("method", c.Route().Method),
+				slog.String("path", c.Route().Path),
+				slog.String("time", end.String()),
+				slog.String("ip", c.IP()),
+				slog.String("id", c.Locals("requestid").(string)),
+			),
 		)
 		return err
 	}
