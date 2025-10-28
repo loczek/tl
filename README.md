@@ -28,7 +28,7 @@ TiiinyLink is a link shortener service that is designed to be scalable, highly a
 
 ```sh
 # Initialize infrastructure
-$ terraform -chdir=deployment/infra/staging apply
+$ terraform -chdir=deployment/infra/production apply
 
 # Run nomad script or set NOMAD_ADDR env var
 $ . ./scripts/nomad.sh
@@ -38,9 +38,9 @@ $ nomad acl bootstrap
 
 # Initialize nomad variables
 $ nomad var put nomad/jobs/server db_password=$(pass projects/tl/prod/postgres/password)
-$ nomad var put nomad/jobs/grafana username=$(pass projects/tl/grafana/username) password=$(pass projects/tl/grafana/password)
+$ nomad var put nomad/jobs/grafana username=$(pass projects/tl/prod/grafana/username) password=$(pass projects/tl/prod/grafana/password)
 $ nomad var put nomad/jobs/postgres password=$(pass projects/tl/prod/postgres/password)
-$ nomad var put nomad/jobs/traefik acme_email=$(pass projects/tl/acme/email) cf_dns_api_token=$(pass projects/tl/cloudflare/dns_api_token)
+$ nomad var put nomad/jobs/traefik acme_email=$(pass projects/tl/prod/acme/email) cf_dns_api_token=$(pass projects/tl/prod/cloudflare/dns_api_token)
 
 # Run nomad plugins
 $ nomad job run deployment/plugins/plugin-ebs-controller.nomad.hcl
