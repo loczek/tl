@@ -2,10 +2,12 @@ package api
 
 import (
 	"database/sql"
+	_ "embed"
 	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	fiberlogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -20,6 +22,9 @@ import (
 	"github.com/loczek/tl/services/shortener"
 	"github.com/loczek/tl/services/temp"
 )
+
+//go:embed assets/favicon.ico
+var faviconData []byte
 
 type ApiServer struct {
 	db    *sql.DB
@@ -55,6 +60,10 @@ func (s *ApiServer) Run() *fiber.App {
 	app.Use(middleware.AttachTraceContext())
 	app.Use(middleware.Logger())
 	app.Use(middleware.MetricsByName())
+
+	app.Use(favicon.New(favicon.Config{
+		Data: faviconData,
+	}))
 
 	healthHandler := health.NewHandler(log.With(slog.String("service", "health")))
 	app.Get("/health", healthHandler.Health).Name("health")
