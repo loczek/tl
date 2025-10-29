@@ -31,7 +31,7 @@ TiiinyLink is a link shortener service that is designed to be scalable, highly a
 $ terraform -chdir=deployment/infra/production apply
 
 # Run nomad script or set NOMAD_ADDR env var
-$ . ./scripts/nomad.sh
+$ . ./scripts/prod/nomad.sh
 
 # Bootstrap nomad acl (save secret token)
 $ nomad acl bootstrap
@@ -50,7 +50,7 @@ $ nomad job run deployment/plugins/plugin-ebs-nodes.nomad.hcl
 $ nomad volume create deployment/volumes/traefik.hcl
 
 # Register CSI EBS volumes
-$ ./deployment/infra/production/scripts/postgres-volume.sh
+$ ./scripts/prod/postgres-volume.sh
 
 # Run nomad jobs
 $ nomad job run deployment/jobs/prometheus.nomad.hcl
