@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "nomad_server_attach" {
 }
 
 resource "aws_iam_instance_profile" "nomad_server_profile" {
-  name = "nomad-server-profile"
+  # name = "nomad-server-profile"
   role = aws_iam_role.nomad_server_role.name
 }
 
@@ -90,7 +90,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_key_pair" "deployer" {
-  key_name   = "tl-deployer-key"
+  # key_name   = "tl-deployer-key"
   public_key = var.ssh_public_key
 }
 
@@ -133,7 +133,7 @@ resource "aws_instance" "tl_monitoring" {
   }
 
   tags = {
-    "Name"        = "tl-monitoring"
+    "Name"        = "tl-monitoring-${var.environment}"
     "NomadServer" = true
   }
 }
@@ -175,7 +175,7 @@ resource "aws_instance" "tl_database" {
   }
 
   tags = {
-    "Name"        = "tl-database"
+    "Name"        = "tl-database-${var.environment}"
     "NomadServer" = true
   }
 }
@@ -185,7 +185,7 @@ resource "aws_ebs_volume" "tl_database" {
   size              = 20
 
   tags = {
-    "Name" = "tl-ebs-database"
+    "Name" = "tl-ebs-database-${var.environment}"
   }
 }
 
@@ -227,7 +227,7 @@ resource "aws_instance" "tl_instance" {
   }
 
   tags = {
-    "Name"        = "tl-ingress"
+    "Name"        = "tl-ingress-${var.environment}"
     "NomadServer" = true
   }
 }

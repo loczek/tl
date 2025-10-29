@@ -1,7 +1,10 @@
 resource "aws_security_group" "public" {
-  name        = "tl-sg-public"
   description = "HTTP/HTTPS ingress security group"
   vpc_id      = var.vpc_id
+
+  tags = {
+    "Name" =  "tl-sg-public-${var.environment}"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "http" {
@@ -27,9 +30,12 @@ resource "aws_vpc_security_group_egress_rule" "all" {
 }
 
 resource "aws_security_group" "internal" {
-  name        = "tl-sg-internal"
   description = "HTTP/HTTPS ingress security group"
   vpc_id      = var.vpc_id
+
+  tags = {
+    "Name" =  "tl-sg-internal-${var.environment}"
+  }
 }
 
 resource "aws_vpc_security_group_egress_rule" "internet" {
@@ -51,9 +57,12 @@ resource "aws_vpc_security_group_egress_rule" "internal" {
 }
 
 resource "aws_security_group" "private" {
-  name        = "tl-sg-private"
   description = "SSH security group"
   vpc_id      = var.vpc_id
+
+  tags = {
+    "Name" =  "tl-sg-private-${var.environment}"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "ssh" {

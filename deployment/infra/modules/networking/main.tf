@@ -3,7 +3,7 @@ resource "aws_vpc" "main" {
   assign_generated_ipv6_cidr_block = true
 
   tags = {
-    "Name" = "tl-vpc"
+    "Name" = "tl-vpc-${var.environment}"
   }
 }
 
@@ -14,14 +14,14 @@ resource "aws_eip" "static_ip" {
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
   tags = {
-    "Name" = "tl-internet-gateway"
+    "Name" = "tl-internet-gateway-${var.environment}"
   }
 }
 
 resource "aws_egress_only_internet_gateway" "egw" {
   vpc_id = aws_vpc.main.id
   tags = {
-    "Name" = "tl-egress-only-internet-gateway"
+    "Name" = "tl-egress-only-internet-gateway-${var.environment}"
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_subnet" "public-1" {
   cidr_block        = "10.0.0.0/20"
   availability_zone = "eu-central-1a"
   tags = {
-    "Name" = "tl-public-1"
+    "Name" = "tl-public-1-${var.environment}"
   }
 }
 
@@ -39,7 +39,7 @@ resource "aws_subnet" "public-2" {
   cidr_block        = "10.0.16.0/20"
   availability_zone = "eu-central-1b"
   tags = {
-    "Name" = "tl-public-2"
+    "Name" = "tl-public-2-${var.environment}"
   }
 }
 
@@ -48,7 +48,7 @@ resource "aws_subnet" "public-3" {
   cidr_block        = "10.0.32.0/20"
   availability_zone = "eu-central-1c"
   tags = {
-    "Name" = "tl-public-3"
+    "Name" = "tl-public-3-${var.environment}"
   }
 }
 
@@ -60,7 +60,7 @@ resource "aws_subnet" "private-1" {
   assign_ipv6_address_on_creation = true
 
   tags = {
-    "Name" = "tl-private-1"
+    "Name" = "tl-private-1-${var.environment}"
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_subnet" "private-2" {
   assign_ipv6_address_on_creation = true
 
   tags = {
-    "Name" = "tl-private-2"
+    "Name" = "tl-private-2-${var.environment}"
   }
 }
 
@@ -84,7 +84,7 @@ resource "aws_subnet" "private-3" {
   assign_ipv6_address_on_creation = true
 
   tags = {
-    "Name" = "tl-private-3"
+    "Name" = "tl-private-3-${var.environment}"
   }
 }
 
@@ -111,7 +111,7 @@ resource "aws_default_route_table" "private" {
   }
 
   tags = {
-    "Name" = "tl-private",
+    "Name" = "tl-private-${var.environment}",
   }
 }
 
@@ -133,7 +133,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    "Name" = "tl-public",
+    "Name" = "tl-public-${var.environment}",
   }
 }
 

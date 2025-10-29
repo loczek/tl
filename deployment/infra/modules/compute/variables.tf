@@ -1,3 +1,8 @@
+variable "environment" {
+  type = string
+  default = "prod"
+}
+
 variable "ssh_public_key" {
   type = string
 }
@@ -19,11 +24,13 @@ variable "sg_public" {
     id = string
   })
 }
+
 variable "sg_internal" {
   type = object({
     id = string
   })
 }
+
 variable "sg_private" {
   type = object({
     id = string

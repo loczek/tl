@@ -2,14 +2,13 @@ provider "aws" {
   region = "eu-central-1"
   default_tags {
     tags = {
-      Environment = "staging"
+      Environment = "production"
     }
   }
 }
 
 module "networking" {
   source = "../modules/networking"
-  environment = "stage"
 }
 
 module "security" {
@@ -18,7 +17,6 @@ module "security" {
   vpc_id = module.networking.vpc_id
 
   ip_whitelist = var.ip_whitelist
-  environment = "stage"
 }
 
 module "compute" {
@@ -32,5 +30,4 @@ module "compute" {
   sg_private     = module.security.sg_private
 
   ssh_public_key = var.ssh_public_key
-  environment = "stage"
 }
