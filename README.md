@@ -50,7 +50,7 @@ $ nomad job run deployment/plugins/plugin-ebs-nodes.nomad.hcl
 $ nomad volume create deployment/volumes/traefik.hcl
 
 # Register CSI EBS volumes
-$ nomad volume register deployment/volumes/postgres.hcl
+$ ./deployment/infra/production/scripts/postgres-volume.sh
 
 # Run nomad jobs
 $ nomad job run deployment/jobs/prometheus.nomad.hcl
